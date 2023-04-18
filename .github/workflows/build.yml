@@ -37,7 +37,7 @@ jobs:
         version: '6.2.*'
 
     - name: Install dependencies
-      run: sudo apt install -y gdal-bin libgdal-dev libxrandr-dev libxinerama-dev xorg-dev libxcursor-dev libxi-dev libasound2-dev libgdal-dev libboost1.74-dev freeglut3-dev glew-utils libpng-dev libcurl4-openssl-dev libmpv-dev
+      run: sudo apt install -y gdal-bin libgdal-dev libxrandr-dev libxinerama-dev xorg-dev libxcursor-dev libxi-dev libasound2-dev libgdal-dev libboost1.74-dev freeglut3-dev glew-utils libpng-dev libcurl4-openssl-dev libmpv-dev libvulkan-dev
 
     - name: Configure CMake
       run: cmake -B ${{env.BUILD_DIR}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/g++-11 -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/gcc-11 -DASSIMP_BUILD_MINIZIP=1

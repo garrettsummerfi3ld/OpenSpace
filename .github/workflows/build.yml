@@ -103,7 +103,7 @@ jobs:
         version: '6.2.*'
 
     - name: Install dependencies
-      run: brew install glew freeimage boost curl gdal
+      run: brew install glew freeimage boost curl gdal mpv vulkan-headers vulkan-loader
 
     - name: Configure Cmake
       run: cmake -B ${{env.BUILD_DIR}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -G "Xcode"

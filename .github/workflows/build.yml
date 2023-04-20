@@ -84,7 +84,7 @@ jobs:
 
     - name: Configure CMake Visual Studio 2019
       if: ${{ matrix.os }} == 'windows-2019'
-      run: cmake -B ${{env.BUILD_DIR_WIN}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -G "Visual Studio 17 2022"
+      run: cmake -B ${{env.BUILD_DIR_WIN}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -G "Visual Studio 16 2019"
 
     - name: Build
       run: msbuild ${{env.BUILD_DIR_WIN}}/OpenSpace.sln /p:Configuration=Release /p:Platform=x64

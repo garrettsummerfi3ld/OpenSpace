@@ -22,8 +22,9 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, ubuntu-20.04 ]
+        qt-ver: [ 6.2.*, 6.5.* ]
     runs-on: ${{ matrix.os }}
-    name: Build on ${{ matrix.os }}
+    name: Build on Linux - ${{ matrix.os }} @ QT ${{ matrix.qt-ver }} 
 
     steps:
     - uses: actions/checkout@v3
@@ -34,7 +35,7 @@ jobs:
     - name: Install Qt6
       uses: jurplel/install-qt-action@v3.0.0
       with:
-        version: '6.2.*'
+        version: ${{ matrix.qt-ver }}
 
     - name: Install dependencies
       run: sudo apt install -y gdal-bin libgdal-dev libxrandr-dev libxinerama-dev xorg-dev libxcursor-dev libxi-dev libasound2-dev libgdal-dev libboost-dev freeglut3-dev glew-utils libpng-dev libcurl4-openssl-dev libmpv-dev libvulkan-dev
@@ -55,8 +56,9 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest, windows-2019 ]
+        qt-ver: [ 6.2.*, 6.5.* ]
     runs-on: ${{ matrix.os }}
-    name: Build on ${{ matrix.os }}
+    name: Build on Windows - ${{ matrix.os }} @ QT ${{ matrix.qt-ver }} 
     
     steps:
     - uses: actions/checkout@v3
@@ -67,7 +69,7 @@ jobs:
     - name: Install Qt6
       uses: jurplel/install-qt-action@v3.0.0
       with:
-        version: '6.2.*'
+        version: ${{ matrix.qt-ver }}
         host: 'windows'
         target: 'desktop'
         arch: 'win64_msvc2019_64'
@@ -99,8 +101,9 @@ jobs:
     strategy:
       matrix:
         os: [ macos-latest ]
+        qt-ver: [ 6.2.*, 6.5.* ]
     runs-on: ${{ matrix.os }}
-    name: Build on ${{ matrix.os }}
+    name: Build on macOS - ${{ matrix.os }} @ QT ${{ matrix.qt-ver }} 
 
     steps:
     - uses: actions/checkout@v3
@@ -111,7 +114,7 @@ jobs:
     - name: Install Qt6
       uses: jurplel/install-qt-action@v3.0.0
       with:
-        version: '6.2.*'
+        version: ${{ matrix.qt-ver }}
 
     - name: Install dependencies
       run: brew install glew freeimage boost curl gdal mpv vulkan-headers vulkan-loader

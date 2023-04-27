@@ -164,9 +164,8 @@ jobs:
         cp ${{github.workspace}} C:\OpenSpace
         ls C:\
 
-    - name: Configure CMake (Visual Studio 2022)
-      shell: cmd
+    - name: Deploy
       run: |
-          cd /d ${{ env.BUILD_DIR_WIN }}
-          cd ..
-          deploy.bat
+        cd C:\OpenSpace
+        deploy.bat
+      shell: cmd

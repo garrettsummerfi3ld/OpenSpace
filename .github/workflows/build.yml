@@ -157,9 +157,16 @@ jobs:
     
     - name: Install dependencies
       run: choco install boost-msvc-14.3
+
+    # Due to a limitation on free GitHub runners, we need a larger build drive, the C:\ drive on the runner will suffice
+    - name: Hack - Move repository to larger drive
+      run: |
+        cp ${{github.workspace}} C:\OpenSpace
+        ls C:\
       
     - name: Deploy
       run: deploy.bat
+      working-directory: C:\OpenSpace
       shell: cmd
       continue-on-error: true
 

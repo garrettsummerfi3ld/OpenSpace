@@ -164,12 +164,83 @@ jobs:
         cp ${{github.workspace}} C:\OpenSpace
         ls C:\
       
-    - name: Deploy
-      run: deploy.bat
-      working-directory: C:\OpenSpace
-      shell: cmd
-      continue-on-error: true
+    - name: Configure Cmake
+      run: cmake -D SGCT_BUILD_TESTS=OFF -DGHOUL_HIGH_DEBUG_MODE=OFF -DGHOUL_HAVE_TESTS=OFF -DOPENSPACE_HAVE_TESTS=OFF -DOPENSPACE_ENABLE_ALL_MODULES=ON -S .^ -B ${{env.BUILD_DIR_WIN}}-deploy
 
+    - name: Build Release binaries
+      run: cmake --build -B ${{env.BUILD_DIR_WIN}}-deploy --config RelWidDebInfo --target OpenSpace --parallel -- /p:CL_MPcount=16
+
+    - name: Save PDB files
+      working-directory: C:\OpenSpace
+      run: |
+        "C:\Program Files\7-Zip\7z.exe" a pdbs.zip bin/RelWithDebInfo/*.pdb
+
+    - name: Mid-build cleanup
+      shell: cmd
+      working-directory: C:\OpenSpace
+      run: |
+        del bin\RelWithDebInfo\*.pdb
+        del bin\RelWithDebInfo\codegen.exe
+        del bin\RelWithDebInfo\Qt6Svg.dll
+        rmdir /S /Q bin\RelWithDebInfo\iconengines
+        rmdir /S /Q bin\RelWithDebInfo\imageformats
+        rmdir /S /Q bin\RelWithDebInfo\networkinformation
+
+    - name: Update docs
+      shell: cmd
+      working-directory: C:\OpenSpace
+      run: |
+        copy documentation\documentation.js ..
+        git checkout HEAD -- documentation.js
+
+    - name: Move binary files
+      shell: cmd
+      working-directory: C:\OpenSpace
+      run: |
+        robocopy bin\\RelWithDebInfo bin /E /MOV
+        rmdir /S /Q bin\\RelWithDebInfo
+
+    - name: Download Visual C++ Redistributable
+      working-directory: C:\OpenSpace
+      run: curl "http://aka.ms/vs/17/release/vc_redist.x64.exe" --output vc_redist.x64.exe -L
+        
+    - name: Package zip file
+      shell: cmd
+      working-directory: C:\OpenSpace
+      run: |
+        "C:\Program Files\7-Zip\7z.exe" a -tzip -mx=9 -mfb=257 -mpass=15 OpenSpace.zip^
+          bin/*^
+          config/*^
+          data/*^
+          documentation/*^
+          scripts/*^
+          shaders/*^
+          ACKNOWLEDGMENTS.md^
+          CITATION.cff^
+          CODE_OF_CONDUCT.md^
+          COMMIT.md^
+          CREDITS.md^
+          LICENSE.md^
+          openspace.cfg^
+          README.md^
+          vc_redist.x64.exe^
+          ^
+          modules/*/shaders/*^
+          modules/*/scripts/*^
+          modules/globebrowsing/gdal_data/*^
+          modules/webgui/ext/nodejs/node.exe^
+          ^
+          -x!documentation/.git
+
+    - name: Final Cleanup
+      shell: cmd
+      run: |
+        rmdir /S /Q bin
+        del vc_redist.x64.exe
+        if exist bin-old move bin-old bin
+        if exist build-deploy rmdir /S /Q build-deploy
+        move documentationData.js documentation
+       
     - name: Find zip files
       run: |
         Get-ChildItem .\OpenSpace.zip

@@ -165,7 +165,7 @@ jobs:
         ls C:\
       
     - name: Configure Cmake
-      run: cmake -D SGCT_BUILD_TESTS=OFF -DGHOUL_HIGH_DEBUG_MODE=OFF -DGHOUL_HAVE_TESTS=OFF -DOPENSPACE_HAVE_TESTS=OFF -DOPENSPACE_ENABLE_ALL_MODULES=ON -S C:\OpenSpace -B ${{env.BUILD_DIR_WIN}}-deploy
+      run: cmake -D SGCT_BUILD_TESTS=OFF -DGHOUL_HIGH_DEBUG_MODE=OFF -DGHOUL_HAVE_TESTS=OFF -DOPENSPACE_HAVE_TESTS=OFF -DOPENSPACE_ENABLE_ALL_MODULES=ON -S C:\OpenSpace\. -B ${{env.BUILD_DIR_WIN}}-deploy
 
     - name: Build Release binaries
       run: cmake --build -B ${{env.BUILD_DIR_WIN}}-deploy --config RelWidDebInfo --target OpenSpace --parallel -- /p:CL_MPcount=16

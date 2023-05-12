@@ -165,26 +165,12 @@ jobs:
         ls C:\
       
     - name: Run CMake into 'build-deploy' folder
-      shell: cmd
       run: |
-        cmake^
-          -D SGCT_BUILD_TESTS=OFF^
-          -D GHOUL_HIGH_DEBUG_MODE=OFF^
-          -D GHOUL_HAVE_TESTS=OFF^
-          -D OPENSPACE_HAVE_TESTS=OFF^
-          -D OPENSPACE_ENABLE_ALL_MODULES=ON^
-          -S C:\OpenSpace
-          -B C:\OpenSpace\build-deploy
+        cmake -DSGCT_BUILD_TESTS=OFF^ -DGHOUL_HIGH_DEBUG_MODE=OFF^ -DGHOUL_HAVE_TESTS=OFF^ -DOPENSPACE_HAVE_TESTS=OFF^ -DOPENSPACE_ENABLE_ALL_MODULES=ON^ -B C:\OpenSpace\build-deploy
           
     - name: Build OpenSpace in RelWithDebInfo mode
-      shell: cmd
       run: |
-        cmake^
-          --build C:\OpenSpace\build-deploy^
-          --config RelWithDebInfo^
-          --target OpenSpace^
-          --parallel^
-          -- /p:CL_MPcount=16
+        cmake --build C:\OpenSpace\build-deploy --config RelWithDebInfo --target OpenSpace --parallel -- /p:CL_MPcount=16
           
     - name: Save PDB files
       run: |
@@ -210,32 +196,11 @@ jobs:
         rmdir /S /Q C:\\OpenSpace\\bin\\RelWithDebInfo
 
     - name: cURL Microsoft VC++ Resistributable
-      run: curl "http://aka.ms/vs/17/release/vc_redist.x64.exe" --output C:\OpenSpace\vc_redist.x64.exe -L
+      run: curl "http://aka.ms/vs/17/release/vc_redist.x64.exe" --output vc_redist.x64.exe -L
 
     - name: Zip artifacts
-      shell: cmd
       run: |
-        "C:\Program Files\7-Zip\7z.exe" a -tzip -mx=9 -mfb=257 -mpass=15 OpenSpace.zip^
-          C:\OpenSpace\bin/*^
-          C:\OpenSpace\config/*^
-          C:\OpenSpace\data/*^
-          C:\OpenSpace\documentation/*^
-          C:\OpenSpace\scripts/*^
-          C:\OpenSpace\shaders/*^
-          C:\OpenSpace\ACKNOWLEDGMENTS.md^
-          C:\OpenSpace\CITATION.cff^
-          C:\OpenSpace\CODE_OF_CONDUCT.md^
-          C:\OpenSpace\COMMIT.md^
-          C:\OpenSpace\CREDITS.md^
-          C:\OpenSpace\LICENSE.md^
-          C:\OpenSpace\openspace.cfg^
-          C:\OpenSpace\README.md^
-          C:\OpenSpace\vc_redist.x64.exe^
-          C:\OpenSpace\modules/*/shaders/*^
-          C:\OpenSpace\modules/*/scripts/*^
-          C:\OpenSpace\modules/globebrowsing/gdal_data/*^
-          C:\OpenSpace\modules/webgui/ext/nodejs/node.exe^
-          C:\OpenSpace\-x!documentation/.git
+        "C:\Program Files\7-Zip\7z.exe" a -tzip -mx=9 -mfb=257 -mpass=15 OpenSpace.zip C:\OpenSpace\bin/* config/* data/* documentation/* scripts/* shaders/* ACKNOWLEDGMENTS.md CITATION.cff CODE_OF_CONDUCT.md COMMIT.md CREDITS.md LICENSE.md openspace.cfg README.md vc_redist.x64.exe modules/*/shaders/* modules/*/scripts/* modules/globebrowsing/gdal_data/* modules/webgui/ext/nodejs/node.exe -x!documentation/.git
 
     - name: Find zip files
       run: |

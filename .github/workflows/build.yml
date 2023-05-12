@@ -167,7 +167,6 @@ jobs:
     - name: Run Deploy Script inside repository
       working-directory: C:\OpenSpace
       run: |
-        echo $PWD
         ls $PWD
      #   ./deploy.bat
        

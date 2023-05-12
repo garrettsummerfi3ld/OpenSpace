@@ -140,10 +140,10 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
-      with:
-        submodules: 'recursive'
+    #  with:
+    #    submodules: 'recursive'
         
-    # Qt is not friendly to install manually, nor any runner has Qt installed by default, this action resolves this issue
+    ## Qt is not friendly to install manually, nor any runner has Qt installed by default, this action resolves this issue
     #- name: Install Qt6
     #  uses: jurplel/install-qt-action@v3.0.0
     #  with:
@@ -167,7 +167,7 @@ jobs:
     - name: Run Deploy Script inside repository
       working-directory: C:\OpenSpace
       run: |
-        ls C:\OpenSpace
+        ls C:\OpenSpace\
     #    & 'C:\OpenSpace\deploy.bat'
        
     #- name: Find zip files

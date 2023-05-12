@@ -168,6 +168,7 @@ jobs:
       working-directory: C:\OpenSpace
       run: |
         echo $PWD
+        ls $PWD
      #   ./deploy.bat
        
     #- name: Find zip files

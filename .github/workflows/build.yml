@@ -140,23 +140,23 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
-    #  with:
-    #    submodules: 'recursive'
-        
-    ## Qt is not friendly to install manually, nor any runner has Qt installed by default, this action resolves this issue
-    #- name: Install Qt6
-    #  uses: jurplel/install-qt-action@v3.0.0
-    #  with:
-    #    version: ${{ matrix.qt-ver }}
-    #    host: 'windows'
-    #    target: 'desktop'
-    #    arch: 'win64_msvc2019_64'
+      with:
+        submodules: 'recursive'
+       
+    # Qt is not friendly to install manually, nor any runner has Qt installed by default, this action resolves this issue
+    - name: Install Qt6
+      uses: jurplel/install-qt-action@v3.0.0
+      with:
+        version: ${{ matrix.qt-ver }}
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_msvc2019_64'
 
-    #- name: Setup MSBuild
-    #  uses: microsoft/setup-msbuild@v1.1.3
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1.3
     
-    #- name: Install dependencies
-    #  run: choco install boost-msvc-14.3
+    - name: Install dependencies
+      run: choco install boost-msvc-14.3
 
     # Due to a limitation on free GitHub runners, we need a larger build drive, the C:\ drive on the runner will suffice
     - name: Hack - Move repository to larger drive
@@ -164,14 +164,75 @@ jobs:
         cp ${{github.workspace}} C:\OpenSpace
         ls C:\
       
-    - name: Run Deploy Script inside repository
-      working-directory: C:\OpenSpace
+    - name: Run CMake into 'build-deploy' folder
       run: |
-        ls C:\OpenSpace\
-    #    & 'C:\OpenSpace\deploy.bat'
-       
-    #- name: Find zip files
-    #  run: |
-    #    Get-ChildItem .\OpenSpace.zip
-    #    Get-ChildItem .\pdbs.zip
-    #  working-directory: C:\OpenSpace
+        cmake^
+          -D SGCT_BUILD_TESTS=OFF^
+          -D GHOUL_HIGH_DEBUG_MODE=OFF^
+          -D GHOUL_HAVE_TESTS=OFF^
+          -D OPENSPACE_HAVE_TESTS=OFF^
+          -D OPENSPACE_ENABLE_ALL_MODULES=ON^
+          -S C:\OpenSpace
+          -B C:\OpenSpace\build-deploy
+          
+    - name: Build OpenSpace in RelWithDebInfo mode
+      run: |
+        cmake^
+          --build C:\OpenSpace\build-deploy^
+          --config RelWithDebInfo^
+          --target OpenSpace^
+          --parallel^
+          -- /p:CL_MPcount=16
+          
+    - name: Save PDB files
+      run: |
+        "C:\Program Files\7-Zip\7z.exe" a pdbs.zip C:/OpenSpace/bin/RelWithDebInfo/*.pdb
+
+    - name: Cleanup files before archiving artifact
+      run: |
+        del C:\OpenSpace\bin\RelWithDebInfo\*.pdb
+        del C:\OpenSpace\bin\RelWithDebInfo\codegen.exe
+        del C:\OpenSpace\bin\RelWithDebInfo\Qt6Svg.dll
+        rmdir /S /Q C:\OpenSpace\bin\RelWithDebInfo\iconengines
+        rmdir /S /Q C:\OpenSpace\bin\RelWithDebInfo\imageformats
+        rmdir /S /Q C:\OpenSpace\bin\RelWithDebInfo\networkinformation
+
+    - name: Reset Documentation
+      run: |
+        copy C:\OpenSpace\documentation\documentationData.js C:\OpenSpace
+        git checkout HEAD -- documentationData.js
+
+    - name: Cleanup 'bin/' directory
+      run: |
+        robocopy C:\\OpenSpace\\bin\\RelWithDebInfo bin /E /MOV
+        rmdir /S /Q C:\\OpenSpace\\bin\\RelWithDebInfo
+
+    - name: Zip artifacts
+      run: |
+        "C:\Program Files\7-Zip\7z.exe" a -tzip -mx=9 -mfb=257 -mpass=15 OpenSpace.zip^
+          C:\OpenSpace\bin/*^
+          C:\OpenSpace\config/*^
+          C:\OpenSpace\data/*^
+          C:\OpenSpace\documentation/*^
+          C:\OpenSpace\scripts/*^
+          C:\OpenSpace\shaders/*^
+          C:\OpenSpace\ACKNOWLEDGMENTS.md^
+          C:\OpenSpace\CITATION.cff^
+          C:\OpenSpace\CODE_OF_CONDUCT.md^
+          C:\OpenSpace\COMMIT.md^
+          C:\OpenSpace\CREDITS.md^
+          C:\OpenSpace\LICENSE.md^
+          C:\OpenSpace\openspace.cfg^
+          C:\OpenSpace\README.md^
+          C:\OpenSpace\vc_redist.x64.exe^
+          C:\OpenSpace\modules/*/shaders/*^
+          C:\OpenSpace\modules/*/scripts/*^
+          C:\OpenSpace\modules/globebrowsing/gdal_data/*^
+          C:\OpenSpace\modules/webgui/ext/nodejs/node.exe^
+          C:\OpenSpace\-x!documentation/.git
+
+    - name: Find zip files
+      run: |
+        Get-ChildItem .\OpenSpace.zip
+        Get-ChildItem .\pdbs.zip
+      working-directory: C:\OpenSpace

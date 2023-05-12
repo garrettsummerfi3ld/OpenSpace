@@ -144,19 +144,19 @@ jobs:
         submodules: 'recursive'
         
     # Qt is not friendly to install manually, nor any runner has Qt installed by default, this action resolves this issue
-    - name: Install Qt6
-      uses: jurplel/install-qt-action@v3.0.0
-      with:
-        version: ${{ matrix.qt-ver }}
-        host: 'windows'
-        target: 'desktop'
-        arch: 'win64_msvc2019_64'
+    #- name: Install Qt6
+    #  uses: jurplel/install-qt-action@v3.0.0
+    #  with:
+    #    version: ${{ matrix.qt-ver }}
+    #    host: 'windows'
+    #    target: 'desktop'
+    #    arch: 'win64_msvc2019_64'
 
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1.1.3
+    #- name: Setup MSBuild
+    #  uses: microsoft/setup-msbuild@v1.1.3
     
-    - name: Install dependencies
-      run: choco install boost-msvc-14.3
+    #- name: Install dependencies
+    #  run: choco install boost-msvc-14.3
 
     # Due to a limitation on free GitHub runners, we need a larger build drive, the C:\ drive on the runner will suffice
     - name: Hack - Move repository to larger drive
@@ -167,11 +167,11 @@ jobs:
     - name: Run Deploy Script inside repository
       working-directory: C:\OpenSpace
       run: |
-        pwd
-        ./deploy.bat
+        echo $PWD
+     #   ./deploy.bat
        
-    - name: Find zip files
-      run: |
-        Get-ChildItem .\OpenSpace.zip
-        Get-ChildItem .\pdbs.zip
-      working-directory: C:\OpenSpace
+    #- name: Find zip files
+    #  run: |
+    #    Get-ChildItem .\OpenSpace.zip
+    #    Get-ChildItem .\pdbs.zip
+    #  working-directory: C:\OpenSpace

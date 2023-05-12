@@ -167,7 +167,7 @@ jobs:
     - name: Run Deploy Script inside repository
       working-directory: C:\OpenSpace
       run: |
-        ls $PWD
+        ls $PWD.Path
      #   ./deploy.bat
        
     #- name: Find zip files

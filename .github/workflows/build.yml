@@ -209,6 +209,9 @@ jobs:
         robocopy C:\\OpenSpace\\bin\\RelWithDebInfo bin /E /MOV
         rmdir /S /Q C:\\OpenSpace\\bin\\RelWithDebInfo
 
+    - name: cURL Microsoft VC++ Resistributable
+      run: curl "http://aka.ms/vs/17/release/vc_redist.x64.exe" --output C:\OpenSpace\vc_redist.x64.exe -L
+
     - name: Zip artifacts
       shell: cmd
       run: |

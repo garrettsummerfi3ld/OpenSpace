@@ -165,7 +165,7 @@ jobs:
         ls C:\
       
     - name: Run Deploy Script inside repository
-      run: .\\deploy.bat
+      run: .\deploy.bat
       working-directory: C:\OpenSpace
        
     - name: Find zip files

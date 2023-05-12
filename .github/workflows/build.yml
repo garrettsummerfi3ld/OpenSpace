@@ -165,12 +165,11 @@ jobs:
         ls C:\
       
     - name: Run Deploy Script inside repository
-      run: |
-        cd C:\OpenSpace
-        ./deploy.bat
+      run: ./deploy.bat
+      working-directory: C:\OpenSpace
        
     - name: Find zip files
       run: |
-        cd C:\OpenSpace
         Get-ChildItem .\OpenSpace.zip
         Get-ChildItem .\pdbs.zip
+      working-directory: C:\OpenSpace

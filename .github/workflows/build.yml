@@ -168,7 +168,7 @@ jobs:
       run: cmake -DSGCT_BUILD_TESTS=OFF -DGHOUL_HIGH_DEBUG_MODE=OFF -DGHOUL_HAVE_TESTS=OFF -DOPENSPACE_HAVE_TESTS=OFF -DOPENSPACE_ENABLE_ALL_MODULES=ON -B ${{env.BUILD_DIR_WIN}}-deploy
 
     - name: Build Release binaries
-      run: cmake --build ${{env.BUILD_DIR_WIN}}-deploy --config RelWidDebInfo --target OpenSpace --parallel /p:CL_MPcount=16
+      run: cmake --build ${{env.BUILD_DIR_WIN}}-deploy --config RelWidDebInfo --target OpenSpace --parallel -- /p:CL_MPcount=16
 
     - name: Save PDB files
       working-directory: C:\OpenSpace

@@ -174,33 +174,33 @@ jobs:
           
     - name: Save PDB files
       run: |
-        7z a pdbs.zip C:/OpenSpace/bin/RelWithDebInfo/*.pdb
+        7z a pdbs.zip ${{ github.workspace }}/bin/RelWithDebInfo/*.pdb
 
     - name: Cleanup files before archiving artifact
       run: |
-        del C:\OpenSpace\bin\RelWithDebInfo\*.pdb
-        del C:\OpenSpace\bin\RelWithDebInfo\codegen.exe
-        del C:\OpenSpace\bin\RelWithDebInfo\Qt6Svg.dll
-        rmdir /S /Q C:\OpenSpace\bin\RelWithDebInfo\iconengines
-        rmdir /S /Q C:\OpenSpace\bin\RelWithDebInfo\imageformats
-        rmdir /S /Q C:\OpenSpace\bin\RelWithDebInfo\networkinformation
+        del ${{ github.workspace }}\bin\RelWithDebInfo\*.pdb
+        del ${{ github.workspace }}\bin\RelWithDebInfo\codegen.exe
+        del ${{ github.workspace }}\bin\RelWithDebInfo\Qt6Svg.dll
+        rmdir /S /Q ${{ github.workspace }}\bin\RelWithDebInfo\iconengines
+        rmdir /S /Q ${{ github.workspace }}\bin\RelWithDebInfo\imageformats
+        rmdir /S /Q ${{ github.workspace }}\bin\RelWithDebInfo\networkinformation
 
     - name: Reset Documentation
       run: |
-        copy C:\OpenSpace\documentation\documentationData.js C:\OpenSpace
+        copy ${{ github.workspace }}\documentation\documentationData.js ${{ github.workspace }}
         git checkout HEAD -- documentationData.js
 
     - name: Cleanup 'bin/' directory
       run: |
-        robocopy C:\\OpenSpace\\bin\\RelWithDebInfo bin /E /MOV
-        rmdir /S /Q C:\\OpenSpace\\bin\\RelWithDebInfo
+        robocopy ${{ github.workspace }}\\bin\\RelWithDebInfo bin /E /MOV
+        rmdir /S /Q ${{ github.workspace }}\\bin\\RelWithDebInfo
 
     - name: cURL Microsoft VC++ Resistributable
       run: curl "http://aka.ms/vs/17/release/vc_redist.x64.exe" --output vc_redist.x64.exe -L
 
     - name: Zip artifacts
       run: |
-        "C:\Program Files\7-Zip\7z.exe" a -tzip -mx=9 -mfb=257 -mpass=15 OpenSpace.zip C:\OpenSpace\bin/* config/* data/* documentation/* scripts/* shaders/* ACKNOWLEDGMENTS.md CITATION.cff CODE_OF_CONDUCT.md COMMIT.md CREDITS.md LICENSE.md openspace.cfg README.md vc_redist.x64.exe modules/*/shaders/* modules/*/scripts/* modules/globebrowsing/gdal_data/* modules/webgui/ext/nodejs/node.exe -x!documentation/.git
+        "C:\Program Files\7-Zip\7z.exe" a -tzip -mx=9 -mfb=257 -mpass=15 OpenSpace.zip ${{ github.workspace }}/bin/* config/* data/* documentation/* scripts/* shaders/* ACKNOWLEDGMENTS.md CITATION.cff CODE_OF_CONDUCT.md COMMIT.md CREDITS.md LICENSE.md openspace.cfg README.md vc_redist.x64.exe modules/*/shaders/* modules/*/scripts/* modules/globebrowsing/gdal_data/* modules/webgui/ext/nodejs/node.exe -x!documentation/.git
 
     - name: Find zip files
       run: |

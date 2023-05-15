@@ -174,7 +174,7 @@ jobs:
           
     - name: Save PDB files
       run: |
-        "C:\Program Files\7-Zip\7z.exe" a pdbs.zip C:/OpenSpace/bin/RelWithDebInfo/*.pdb
+        7z a pdbs.zip C:/OpenSpace/bin/RelWithDebInfo/*.pdb
 
     - name: Cleanup files before archiving artifact
       run: |

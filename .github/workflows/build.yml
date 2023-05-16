@@ -193,6 +193,7 @@ jobs:
         git checkout HEAD -- documentationData.js
 
     - name: Cleanup 'bin/' directory
+      if: ${{ success() || failure() }}
       shell: cmd
       run: |
         robocopy ${{ github.workspace }}\\bin\\RelWithDebInfo bin /E /MOV
@@ -203,6 +204,7 @@ jobs:
       run: curl "http://aka.ms/vs/17/release/vc_redist.x64.exe" --output vc_redist.x64.exe -L
 
     - name: Zip artifacts
+      if: ${{ success() || failure() }}
       run: |
         7z a -tzip -mx=9 -mfb=257 -mpass=15 OpenSpace.zip ${{ github.workspace }}/bin/* config/* data/* documentation/* scripts/* shaders/* ACKNOWLEDGMENTS.md CITATION.cff CODE_OF_CONDUCT.md COMMIT.md CREDITS.md LICENSE.md openspace.cfg README.md vc_redist.x64.exe modules/*/shaders/* modules/*/scripts/* modules/globebrowsing/gdal_data/* modules/webgui/ext/nodejs/node.exe -x!documentation/.git
 

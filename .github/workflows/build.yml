@@ -177,6 +177,7 @@ jobs:
         7z a pdbs.zip ${{ github.workspace }}/bin/RelWithDebInfo/*.pdb
 
     - name: Cleanup files before archiving artifact
+      shell: cmd
       run: |
         del ${{ github.workspace }}\bin\RelWithDebInfo\*.pdb
         del ${{ github.workspace }}\bin\RelWithDebInfo\codegen.exe
@@ -186,11 +187,13 @@ jobs:
         rmdir /S /Q ${{ github.workspace }}\bin\RelWithDebInfo\networkinformation
 
     - name: Reset Documentation
+      shell: cmd
       run: |
         copy ${{ github.workspace }}\documentation\documentationData.js ${{ github.workspace }}
         git checkout HEAD -- documentationData.js
 
     - name: Cleanup 'bin/' directory
+      shell: cmd
       run: |
         robocopy ${{ github.workspace }}\\bin\\RelWithDebInfo bin /E /MOV
         rmdir /S /Q ${{ github.workspace }}\\bin\\RelWithDebInfo
@@ -200,7 +203,7 @@ jobs:
 
     - name: Zip artifacts
       run: |
-        "C:\Program Files\7-Zip\7z.exe" a -tzip -mx=9 -mfb=257 -mpass=15 OpenSpace.zip ${{ github.workspace }}/bin/* config/* data/* documentation/* scripts/* shaders/* ACKNOWLEDGMENTS.md CITATION.cff CODE_OF_CONDUCT.md COMMIT.md CREDITS.md LICENSE.md openspace.cfg README.md vc_redist.x64.exe modules/*/shaders/* modules/*/scripts/* modules/globebrowsing/gdal_data/* modules/webgui/ext/nodejs/node.exe -x!documentation/.git
+        7z a -tzip -mx=9 -mfb=257 -mpass=15 OpenSpace.zip ${{ github.workspace }}/bin/* config/* data/* documentation/* scripts/* shaders/* ACKNOWLEDGMENTS.md CITATION.cff CODE_OF_CONDUCT.md COMMIT.md CREDITS.md LICENSE.md openspace.cfg README.md vc_redist.x64.exe modules/*/shaders/* modules/*/scripts/* modules/globebrowsing/gdal_data/* modules/webgui/ext/nodejs/node.exe -x!documentation/.git
 
     - name: Find zip files
       run: |

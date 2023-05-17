@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, ubuntu-20.04 ]
+        os: [ ubuntu-latest, ubuntu-22.04 ,ubuntu-20.04 ]
         qt-ver: [ 6.2.*, 6.5.* ]
     runs-on: ${{ matrix.os }}
     name: Build on ${{ matrix.os }} - Qt ${{ matrix.qt-ver }} 
@@ -63,7 +63,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-latest, windows-2019 ]
+        os: [ windows-latest, windows-2022, windows-2019 ]
         qt-ver: [ 6.2.*, 6.5.* ]
     runs-on: ${{ matrix.os }}
     name: Build on ${{ matrix.os }} - Qt ${{ matrix.qt-ver }} 
@@ -109,7 +109,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-13, macos-12 ]
+        os: [ macos-latest, macos-13, macos-12 ]
         qt-ver: [ 6.2.*, 6.5.* ]
     runs-on: ${{ matrix.os }}
     name: Build on ${{ matrix.os }} - Qt ${{ matrix.qt-ver }} 
@@ -139,7 +139,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-latest, windows-2019 ]
+        os: [ windows-latest, windows-2022, windows-2019 ]
         qt-ver: [ 6.2.*, 6.5.* ]
     runs-on: ${{ matrix.os }}
     name: Deploy on ${{ matrix.os }} - Qt ${{ matrix.qt-ver }} 
@@ -178,9 +178,11 @@ jobs:
       run: |
         cmake --build C:\OpenSpace\build-deploy --config RelWithDebInfo --target OpenSpace --parallel -- /p:CL_MPcount=16
           
-    - name: Save PDB files
-      run: |
-        7z a pdbs.zip ${{ github.workspace }}/bin/RelWithDebInfo/*.pdb
+    - name: Upload PDB artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: pdbs
+        path: ${{ github.workspace }}/bin/RelWithDebInfo/*.pdb
 
     - name: Cleanup files before archiving artifact
       shell: cmd
@@ -208,12 +210,30 @@ jobs:
     - name: cURL Microsoft VC++ Resistributable
       continue-on-error: true
       run: curl "http://aka.ms/vs/17/release/vc_redist.x64.exe" --output vc_redist.x64.exe -L
-
-    - name: Zip artifacts
-      run: |
-        7z a -tzip -mx=9 -mfb=257 -mpass=15 OpenSpace.zip ${{ github.workspace }}/bin/* config/* data/* documentation/* scripts/* shaders/* ACKNOWLEDGMENTS.md CITATION.cff CODE_OF_CONDUCT.md COMMIT.md CREDITS.md LICENSE.md openspace.cfg README.md vc_redist.x64.exe modules/*/shaders/* modules/*/scripts/* modules/globebrowsing/gdal_data/* modules/webgui/ext/nodejs/node.exe -x!documentation/.git
-
-    - name: Find zip files
-      run: |
-        Get-ChildItem .\OpenSpace.zip
-        Get-ChildItem .\pdbs.zip
+      
+    - name: Upload OpenSpace artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: OpenSpace
+        path: |
+          ${{ github.workspace }}/bin/*
+          config/*
+          data/*
+          documentation/*
+          scripts/*
+          shaders/*
+          ACKNOWLEDGMENTS.md
+          CITATION.cff
+          CODE_OF_CONDUCT.md
+          COMMIT.md
+          CREDITS.md
+          LICENSE.md
+          openspace.cfg
+          README.md
+          vc_redist.x64.exe
+          modules/*/shaders/*
+          modules/*/scripts/*
+          modules/globebrowsing/gdal_data/*
+          modules/webgui/ext/nodejs/node.exe
+          !documentation/.git
+        if-no-files-found: error

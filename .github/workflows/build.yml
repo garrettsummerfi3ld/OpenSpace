@@ -41,7 +41,13 @@ jobs:
     - name: Install dependencies
       run: sudo apt install -y gdal-bin libgdal-dev libxrandr-dev libxinerama-dev xorg-dev libxcursor-dev libxi-dev libasound2-dev libgdal-dev libboost-dev freeglut3-dev glew-utils libpng-dev libcurl4-openssl-dev libmpv-dev libvulkan-dev zlib1g-dev
 
-    - name: Install GCC/G++ 11
+    - name: Ubuntu 20.04 - Install updated mpv
+      if: matrix.os == 'ubuntu-20.04'
+      run: |
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        brew install mpv
+      
+    - name: Ubuntu 20.04 - Install updated gcc/g++ 11
       if: matrix.os == 'ubuntu-20.04'
       run: |
         sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test

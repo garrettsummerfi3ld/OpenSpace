@@ -217,4 +217,3 @@ jobs:
       run: |
         Get-ChildItem .\OpenSpace.zip
         Get-ChildItem .\pdbs.zip
-      working-directory: C:\OpenSpace

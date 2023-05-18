@@ -188,8 +188,9 @@ jobs:
     - name: Upload PDB artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: pdbs
+        name: pdbs-${{ matrix.os }}-Qt v${{ matrix.qt-ver }}
         path: ${{ github.workspace }}/bin/RelWithDebInfo/*.pdb
+        if-no-files-found: error
 
     - name: Cleanup files before archiving artifact
       shell: cmd
@@ -221,7 +222,7 @@ jobs:
     - name: Upload OpenSpace artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: OpenSpace
+        name: OpenSpace-${{ matrix.os }}-Qt v${{ matrix.qt-ver }}
         path: |
           ${{ github.workspace }}/bin/*
           config/*

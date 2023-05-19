@@ -146,8 +146,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-latest, windows-2022, windows-2019 ]
-        qt-ver: [ 6.2.*, 6.5.* ]
+        os: [ windows-latest ]
+        qt-ver: [ 6.5 ]
     runs-on: ${{ matrix.os }}
     name: Deploy on ${{ matrix.os }} - Qt ${{ matrix.qt-ver }} 
     

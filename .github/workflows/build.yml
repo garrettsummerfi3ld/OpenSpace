@@ -141,7 +141,7 @@ jobs:
     - name: Build
       run: xcodebuild -project ${{ github.workspace }}/build/OpenSpace.xcodeproj -scheme ALL_BUILD build 
 
-deploy-win:
+  deploy-win:
     needs: build-win
     strategy:
       fail-fast: false

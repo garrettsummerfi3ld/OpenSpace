@@ -48,6 +48,7 @@ jobs:
       if: matrix.os == 'ubuntu-20.04'
       run: |
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        brew update
         brew install mpv
       
     - name: Install updated gcc/g++ 11

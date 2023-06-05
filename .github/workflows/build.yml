@@ -52,6 +52,8 @@ jobs:
     - name: Install updated mpv (Ubuntu 20.04)
       if: matrix.os == 'ubuntu-20.04'
       run: |
+        sudo apt install ninja-build
+        pip3 install meson
         git clone https://github.com/mpv-player/mpv-build.git
         cd mpv-build
         ./rebuild -j4

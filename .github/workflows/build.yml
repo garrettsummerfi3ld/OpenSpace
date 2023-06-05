@@ -137,8 +137,11 @@ jobs:
         version: ${{ matrix.qt-ver }}
 
     - name: Install dependencies
-      run: brew install glew freeimage boost curl gdal mpv vulkan-headers vulkan-loader brotli
-
+      run: |
+        brew install glew freeimage boost mpv vulkan-headers vulkan-loader brotli
+        brew tap osgeo/osgeo4mac
+        brew install gdal2
+        
     - name: Configure Cmake
       run: cmake -B ${{ env.BUILD_DIR }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "Xcode"
 

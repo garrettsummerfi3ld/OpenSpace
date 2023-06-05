@@ -140,7 +140,7 @@ jobs:
       run: |
         brew install glew freeimage boost mpv vulkan-headers vulkan-loader brotli
         brew tap osgeo/osgeo4mac
-        brew install gdal2
+        brew install osgeo-gdal
         
     - name: Configure Cmake
       run: cmake -B ${{ env.BUILD_DIR }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "Xcode"

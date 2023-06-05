@@ -52,8 +52,7 @@ jobs:
     - name: Install updated mpv (Ubuntu 20.04)
       if: matrix.os == 'ubuntu-20.04'
       run: |
-        sudo apt install ninja-build libfribidi-dev libfribidi-bin libfribidi0
-        pip3 install meson
+        sudo apt install ninja-build libfribidi-dev libfribidi-bin libfribidi0 meson libharfbuzz-bin libharfbuzz-dev
         git clone https://github.com/mpv-player/mpv-build.git
         cd mpv-build
         ./rebuild -j4

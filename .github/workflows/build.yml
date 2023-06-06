@@ -26,10 +26,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, ubuntu-22.04, ubuntu-20.04 ]
-        qt-ver: [ 5.15, 6.2, 6.5 ]
+        qt-ver: [ 6.2, 6.5 ]
         compiler: 
           - { compiler: GCC, cc: gcc-11, cxx: g++-11 }
-          - { compiler: Clang, cc: clang, cxx: clang++ }
+          # - { compiler: Clang, cc: clang, cxx: clang++ }
     runs-on: ${{ matrix.os }}
     name: Build on ${{ matrix.os }} with ${{ matrix.compiler.compiler }} - Qt ${{ matrix.qt-ver }} 
 

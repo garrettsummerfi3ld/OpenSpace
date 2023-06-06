@@ -66,9 +66,9 @@ jobs:
         ./rebuild -j4
         ./install
 
-    # Clang is not updated with older Ubuntu repositories, this helps with installing new and more recent versions of Clang
-    - name: Install updated Clang (Ubuntu 20.04)
-      if:  matrix.os == 'ubuntu-20.04' && matrix.compiler.compiler == 'Clang'
+    # Clang may be older on all Ubuntu repositories, this helps with having at least up to date versions of LLVM/Clang to pick
+    - name: Install updated Clang
+      if:  matrix.compiler.compiler == 'Clang'
       run: |
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh

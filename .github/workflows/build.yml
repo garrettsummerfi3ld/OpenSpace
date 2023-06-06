@@ -150,7 +150,7 @@ jobs:
         brew install boost glew freeimage mpv vulkan-headers vulkan-loader brotli gdal
         
     - name: Configure Cmake
-      run: cmake -B ${{ env.BUILD_DIR }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "Xcode"
+      run: cmake -B ${{ env.BUILD_DIR }} -G "Xcode"
 
     - name: Build
       run: xcodebuild -project ${{ github.workspace }}/build/OpenSpace.xcodeproj -scheme OpenSpace build 

@@ -153,7 +153,7 @@ jobs:
       run: cmake -B ${{ env.BUILD_DIR }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "Xcode"
 
     - name: Build
-      run: xcodebuild -project ${{ github.workspace }}/build/OpenSpace.xcodeproj -scheme ALL_BUILD build 
+      run: xcodebuild -project ${{ github.workspace }}/build/OpenSpace.xcodeproj -scheme OpenSpace build 
 
   deploy-win:
     needs: build-win

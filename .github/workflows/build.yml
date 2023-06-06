@@ -30,7 +30,7 @@ jobs:
         qt-ver: [ 5.15, 6.2, 6.5 ]
         compiler: 
           - { compiler: GCC, cc: gcc-11, cxx: g++-11 }
-          # - { compiler: Clang, cc: clang, cxx: clang++ }
+          - { compiler: Clang, cc: clang, cxx: clang++ }
     runs-on: ${{ matrix.os }}
     name: Build on ${{ matrix.os }} with ${{ matrix.compiler.compiler }} - Qt ${{ matrix.qt-ver }} 
 
@@ -64,7 +64,7 @@ jobs:
         git clone https://github.com/mpv-player/mpv-build.git
         cd mpv-build
         ./rebuild -j4
-        sudo ./install
+        ./install
 
     # Clang is not updated with older Ubuntu repositories, this helps with installing new and more recent versions of Clang
     - name: Install updated Clang (Ubuntu 20.04)
@@ -151,7 +151,7 @@ jobs:
         brew install boost glew freeimage mpv vulkan-headers vulkan-loader brotli gdal
         
     - name: Configure Cmake
-      run: cmake -B ${{ env.BUILD_DIR }} -G "Xcode"
+      run: cmake -B ${{ env.BUILD_DIR }} -G "Xcode" -DOPENSPACE_ENABLE_ALL_MODULES=ON
 
     - name: Build
       run: xcodebuild -project ${{ github.workspace }}/build/OpenSpace.xcodeproj -scheme OpenSpace build 

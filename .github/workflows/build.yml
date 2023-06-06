@@ -150,10 +150,12 @@ jobs:
         brew install boost glew freeimage mpv vulkan-headers vulkan-loader brotli gdal
         
     - name: Configure Cmake
-      run: cmake -B ${{ env.BUILD_DIR }} -G "Xcode" -DOPENSPACE_ENABLE_ALL_MODULES=ON
+      run: |
+        cmake -B ${{ env.BUILD_DIR }} -G "Xcode"
+        cmake -B ${{ env.BUILD_DIR }} -G "Xcode" -DOPENSPACE_ENABLE_ALL_MODULES=ON
 
     - name: Build
-      run: xcodebuild -project ${{ github.workspace }}/build/OpenSpace.xcodeproj -scheme OpenSpace build 
+      run: xcodebuild -project ${{ github.workspace }}/build/OpenSpace.xcodeproj -scheme OpenSpace
 
   deploy-win:
     needs: build-win

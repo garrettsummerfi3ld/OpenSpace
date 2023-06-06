@@ -17,7 +17,6 @@ concurrency:
 
 # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
 env:
-  BUILD_TYPE: Release
   BUILD_DIR: ${{ github.workspace }}/build
   BUILD_DIR_WIN: C:\OpenSpace\build
 
@@ -75,7 +74,7 @@ jobs:
         sudo ./llvm.sh 14
 
     - name: Configure CMake
-      run: cmake -B ${{ env.BUILD_DIR }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/${{ matrix.compiler.cxx }} -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/${{ matrix.compiler.cc }} -DASSIMP_BUILD_MINIZIP=1
+      run: cmake -B ${{ env.BUILD_DIR }} -DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/${{ matrix.compiler.cxx }} -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/${{ matrix.compiler.cc }} -DASSIMP_BUILD_MINIZIP=1
 
     - name: Build
       run: make -C ${{ github.workspace }}/build
@@ -117,11 +116,11 @@ jobs:
 
     - name: Configure CMake (Visual Studio 2022)
       if: matrix.os == 'windows-latest' || matrix.os == 'windows-2022'
-      run: cmake -B ${{ env.BUILD_DIR_WIN }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "Visual Studio 17 2022"
+      run: cmake -B ${{ env.BUILD_DIR_WIN }} -G "Visual Studio 17 2022"
 
     - name: Configure CMake (Visual Studio 2019)
       if: matrix.os == 'windows-2019'
-      run: cmake -B ${{ env.BUILD_DIR_WIN }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "Visual Studio 16 2019"
+      run: cmake -B ${{ env.BUILD_DIR_WIN }} -G "Visual Studio 16 2019"
 
     - name: Build
       run: msbuild ${{ env.BUILD_DIR_WIN }}/OpenSpace.sln /p:Configuration=Release /p:Platform=x64

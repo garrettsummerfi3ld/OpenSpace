@@ -59,11 +59,11 @@ jobs:
       if: matrix.os == 'ubuntu-20.04'
       run: |
         sudo apt install ninja-build libfribidi-dev libfribidi-bin libfribidi0 libharfbuzz-bin libharfbuzz-dev yasm
-        pip3 install meson
+        sudo pip3 install meson
         git clone https://github.com/mpv-player/mpv-build.git
         cd mpv-build
         ./rebuild -j4
-        ./install
+        sudo ./install
 
     # Clang may be older on all Ubuntu repositories, this helps with having at least up to date versions of LLVM/Clang to pick
     - name: Install updated Clang

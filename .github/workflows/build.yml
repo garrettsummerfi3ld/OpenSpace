@@ -187,7 +187,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, macos-13, macos-12]
+        os: [macos-latest, macos-14, macos-13, macos-12]
         qt-ver: [6.2, 6.5]
         xcode-ver: ['latest-stable', 'latest', 'default']
     runs-on: ${{ matrix.os }}

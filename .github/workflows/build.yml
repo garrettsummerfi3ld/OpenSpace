@@ -215,7 +215,10 @@ jobs:
           cache: true
 
       - name: Install dependencies
-        run: brew install boost glew freeimage mpv vulkan-headers vulkan-loader brotli gdal
+        run: |
+          brew update
+          brew upgrade
+          brew install boost glew freeimage mpv vulkan-headers vulkan-loader brotli gdal
 
       # The project will fail to compile unless you run CMake twice, very strange issue
       - name: Configure CMake

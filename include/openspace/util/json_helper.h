@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2023                                                               *
+ * Copyright (c) 2014-2024                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -74,6 +74,13 @@ std::string formatJson(T value);
  * \param key The key the JSON should be sorted by
  */
 void sortJson(nlohmann::json& json, const std::string& key);
+
+/**
+ * Converts the provided JSON object into its corresponding Dictionary format. Please note
+ * that if the JSON contains keys that array of an array type, they are converted into a
+ * Dictionary with numerical keys and the numerical keys start with 1.
+ */
+ghoul::Dictionary jsonToDictionary(const nlohmann::json& json);
 
 } // namespace openspace
 

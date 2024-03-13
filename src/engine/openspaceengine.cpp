@@ -134,13 +134,6 @@ namespace {
         openspace::properties::Property::Visibility::Always
     };
 
-    constexpr openspace::properties::Property::PropertyInfo ShowHiddenSceneInfo = {
-        "ShowHiddenSceneGraphNodes",
-        "Show Hidden Scene Graph Nodes",
-        "If checked, hidden scene graph nodes are visible in the UI",
-        openspace::properties::Property::Visibility::AdvancedUser
-    };
-
     constexpr openspace::properties::Property::PropertyInfo FadeDurationInfo = {
         "FadeDuration",
         "Fade Duration (seconds)",
@@ -172,6 +165,28 @@ namespace {
             global::renderEngine->renderingResolution()
         );
     }
+
+    void resetPropertyChangeFlagsOfSubowners(openspace::properties::PropertyOwner* po) {
+        using namespace openspace;
+
+        for (properties::PropertyOwner* subOwner : po->propertySubOwners()) {
+            resetPropertyChangeFlagsOfSubowners(subOwner);
+        }
+        for (properties::Property* p : po->properties()) {
+            p->resetToUnchanged();
+        }
+    }
+
+    void resetPropertyChangeFlags() {
+        ZoneScoped;
+
+        std::vector<openspace::SceneGraphNode*> nodes =
+            openspace::global::renderEngine->scene()->allSceneGraphNodes();
+        for (openspace::SceneGraphNode* n : nodes) {
+            resetPropertyChangeFlagsOfSubowners(n);
+        }
+    }
+
 } // namespace
 
 namespace openspace {
@@ -182,7 +197,6 @@ OpenSpaceEngine::OpenSpaceEngine()
     : properties::PropertyOwner({ "OpenSpaceEngine", "OpenSpace Engine" })
     , _printEvents(PrintEventsInfo, false)
     , _visibility(VisibilityInfo)
-    , _showHiddenSceneGraphNodes(ShowHiddenSceneInfo, false)
     , _fadeOnEnableDuration(FadeDurationInfo, 1.f, 0.f, 5.f)
     , _disableAllMouseInputs(DisableMouseInputInfo, false)
 {
@@ -202,7 +216,6 @@ OpenSpaceEngine::OpenSpaceEngine()
     });
     addProperty(_visibility);
 
-    addProperty(_showHiddenSceneGraphNodes);
     addProperty(_fadeOnEnableDuration);
     addProperty(_disableAllMouseInputs);
 }
@@ -217,7 +230,7 @@ void OpenSpaceEngine::registerPathTokens() {
     using T = std::string;
     for (const std::pair<const T, T>& path : global::configuration->pathTokens) {
         std::string fullKey = "${" + path.first + "}";
-        LDEBUG(fmt::format("Registering path '{}': '{}'", fullKey, path.second));
+        LDEBUG(fmt::format("Registering path '{}': {}", fullKey, path.second));
 
         const bool overrideBase = (fullKey == "${BASE}");
         if (overrideBase) {
@@ -489,9 +502,9 @@ void OpenSpaceEngine::initializeGL() {
             for (const std::string& ext : m->requiredOpenGLExtensions()) {
                 if (!SysCap.component<OCC>().isExtensionSupported(ext)) {
                     LFATAL(fmt::format(
-                        "Module {} required OpenGL extension {} which is not available "
-                        "on this system. Some functionality related to this module will "
-                        "probably not work",
+                        "Module '{}' required OpenGL extension '{}' which is not "
+                        "available on this system. Some functionality related to this "
+                        "module will probably not work",
                         m->guiName(), ext
                     ));
                 }
@@ -626,27 +639,27 @@ void OpenSpaceEngine::initializeGL() {
                 case GL_INVALID_ENUM:
                     LERRORC(
                         "OpenGL Invalid State",
-                        fmt::format("Function {}: GL_INVALID_ENUM", f.function->name())
+                        fmt::format("Function '{}': GL_INVALID_ENUM", f.function->name())
                     );
                     break;
                 case GL_INVALID_VALUE:
                     LERRORC(
                         "OpenGL Invalid State",
-                        fmt::format("Function {}: GL_INVALID_VALUE", f.function->name())
+                        fmt::format("Function '{}': GL_INVALID_VALUE", f.function->name())
                     );
                     break;
                 case GL_INVALID_OPERATION:
                     LERRORC(
                         "OpenGL Invalid State",
                         fmt::format(
-                            "Function {}: GL_INVALID_OPERATION", f.function->name()
+                            "Function '{}': GL_INVALID_OPERATION", f.function->name()
                         ));
                     break;
                 case GL_INVALID_FRAMEBUFFER_OPERATION:
                     LERRORC(
                         "OpenGL Invalid State",
                         fmt::format(
-                            "Function {}: GL_INVALID_FRAMEBUFFER_OPERATION",
+                            "Function '{}': GL_INVALID_FRAMEBUFFER_OPERATION",
                             f.function->name()
                         )
                     );
@@ -654,7 +667,7 @@ void OpenSpaceEngine::initializeGL() {
                 case GL_OUT_OF_MEMORY:
                     LERRORC(
                         "OpenGL Invalid State",
-                        fmt::format("Function {}: GL_OUT_OF_MEMORY", f.function->name())
+                        fmt::format("Function '{}': GL_OUT_OF_MEMORY", f.function->name())
                     );
                     break;
                 default:
@@ -911,15 +924,17 @@ void OpenSpaceEngine::loadFonts() {
         std::filesystem::path fontName = absPath(font.second);
 
         if (!std::filesystem::is_regular_file(fontName)) {
-            LERROR(fmt::format("Could not find font {} for key '{}'", fontName, key));
+            LERROR(fmt::format("Could not find font '{}' for key '{}'", fontName, key));
             continue;
         }
 
-        LDEBUG(fmt::format("Registering font {} with key '{}'", fontName, key));
+        LDEBUG(fmt::format("Registering font '{}' with key '{}'", fontName, key));
         bool success = global::fontManager->registerFontPath(key, fontName);
 
         if (!success) {
-            LERROR(fmt::format("Error registering font {} with key '{}'", fontName, key));
+            LERROR(fmt::format(
+                "Error registering font '{}' with key '{}'", fontName, key
+            ));
         }
     }
 
@@ -1012,11 +1027,10 @@ void OpenSpaceEngine::preSynchronization() {
 
     global::syncEngine->preSynchronization(SyncEngine::IsMaster(master));
     if (master) {
-        double dt = global::windowDelegate->deltaTime();
-
-        if (global::sessionRecording->isSavingFramesDuringPlayback()) {
-            dt = global::sessionRecording->fixedDeltaTimeDuringFrameOutput();
-        }
+        const double dt =
+            global::sessionRecording->isSavingFramesDuringPlayback() ?
+            global::sessionRecording->fixedDeltaTimeDuringFrameOutput() :
+            global::windowDelegate->deltaTime();
 
         global::timeManager->preSynchronization(dt);
 
@@ -1210,25 +1224,6 @@ void OpenSpaceEngine::postDraw() {
     LTRACE("OpenSpaceEngine::postDraw(end)");
 }
 
-void OpenSpaceEngine::resetPropertyChangeFlags() {
-    ZoneScoped;
-
-    std::vector<SceneGraphNode*> nodes =
-        global::renderEngine->scene()->allSceneGraphNodes();
-    for (SceneGraphNode* n : nodes) {
-        resetPropertyChangeFlagsOfSubowners(n);
-    }
-}
-
-void OpenSpaceEngine::resetPropertyChangeFlagsOfSubowners(properties::PropertyOwner* po) {
-    for (properties::PropertyOwner* subOwner : po->propertySubOwners()) {
-        resetPropertyChangeFlagsOfSubowners(subOwner);
-    }
-    for (properties::Property* p : po->properties()) {
-        p->resetToUnchanged();
-    }
-}
-
 void OpenSpaceEngine::keyboardCallback(Key key, KeyModifier mod, KeyAction action,
                                        IsGuiWindow isGuiWindow)
 {
@@ -1256,8 +1251,7 @@ void OpenSpaceEngine::keyboardCallback(Key key, KeyModifier mod, KeyAction actio
         return;
     }
 
-    using F = global::callback::KeyboardCallback;
-    for (const F& func : *global::callback::keyboard) {
+    for (const global::callback::KeyboardCallback& func : *global::callback::keyboard) {
         const bool isConsumed = func(key, mod, action, isGuiWindow);
         if (isConsumed) {
             return;
@@ -1285,8 +1279,7 @@ void OpenSpaceEngine::charCallback(unsigned int codepoint, KeyModifier modifier,
 {
     ZoneScoped;
 
-    using F = global::callback::CharacterCallback;
-    for (const F& func : *global::callback::character) {
+    for (const global::callback::CharacterCallback& func : *global::callback::character) {
         bool isConsumed = func(codepoint, modifier, isGuiWindow);
         if (isConsumed) {
             return;
@@ -1315,7 +1308,7 @@ void OpenSpaceEngine::mouseButtonCallback(MouseButton button, MouseAction action
 
     using F = global::callback::MouseButtonCallback;
     for (const F& func : *global::callback::mouseButton) {
-        bool isConsumed = func(button, action, mods, isGuiWindow);
+        const bool isConsumed = func(button, action, mods, isGuiWindow);
         if (isConsumed) {
             // If the mouse was released, we still want to forward it to the navigation
             // handler in order to reliably terminate a rotation or zoom, or to the other
@@ -1475,12 +1468,8 @@ void OpenSpaceEngine::decode(std::vector<std::byte> data) {
     global::syncEngine->decodeSyncables(std::move(data));
 }
 
-properties::Property::Visibility openspace::OpenSpaceEngine::visibility() const {
+properties::Property::Visibility OpenSpaceEngine::visibility() const {
     return static_cast<properties::Property::Visibility>(_visibility.value());
-}
-
-bool openspace::OpenSpaceEngine::showHiddenSceneGraphNodes() const {
-    return _showHiddenSceneGraphNodes;
 }
 
 void OpenSpaceEngine::toggleShutdownMode() {
@@ -1531,11 +1520,11 @@ bool OpenSpaceEngine::setMode(Mode newMode) {
 
 void OpenSpaceEngine::resetMode() {
     _currentMode = Mode::UserControl;
-    LDEBUG(fmt::format("Reset engine mode to {}", stringify(_currentMode)));
+    LDEBUG(fmt::format("Reset engine mode to '{}'", stringify(_currentMode)));
 }
 
 OpenSpaceEngine::CallbackHandle OpenSpaceEngine::addModeChangeCallback(
-                                                                   ModeChangeCallback cb)
+                                                                    ModeChangeCallback cb)
 {
     CallbackHandle handle = _nextCallbackHandle++;
     _modeChangeCallbacks.emplace_back(handle, std::move(cb));
@@ -1715,7 +1704,7 @@ void setActionsFromProfile(const Profile& p) {
         }
         if (a.script.empty()) {
             LERROR(fmt::format(
-                "Identifier '{}' doesn't provide a Lua command to execute", a.identifier
+                "Identifier '{}' does not provide a Lua command to execute", a.identifier
             ));
         }
         interaction::Action action;

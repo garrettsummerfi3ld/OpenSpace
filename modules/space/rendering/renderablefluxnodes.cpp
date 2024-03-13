@@ -359,12 +359,12 @@ RenderableFluxNodes::RenderableFluxNodes(const ghoul::Dictionary& dictionary)
 
         // Ensure that there are available and valid source files left
         if (_binarySourceFiles.empty()) {
-            LERROR(fmt::format("{} contains no files", _binarySourceFolderPath));
+            LERROR(fmt::format("'{}' contains no files", _binarySourceFolderPath));
         }
     }
     else {
         LERROR(fmt::format(
-            "Source folder {} is not a valid directory", _binarySourceFolderPath
+            "Source folder '{}' is not a valid directory", _binarySourceFolderPath
         ));
     }
 
@@ -479,7 +479,7 @@ void RenderableFluxNodes::loadNodeData(int energybinOption) {
     _statesPos.clear();
     _statesRadius.clear();
 
-    for (unsigned int i = 0; i < _nStates; ++i) {
+    for (unsigned int i = 0; i < _nStates; i++) {
         _vertexPositions.resize(nNodesPerTimestep);
         fileStream.read(reinterpret_cast<char*>(
             _vertexPositions.data()), nNodesPerTimestep * sizeof(glm::vec3)
@@ -488,7 +488,7 @@ void RenderableFluxNodes::loadNodeData(int energybinOption) {
         _statesPos.push_back(_vertexPositions);
         _vertexPositions.clear();
     }
-    for (unsigned int i = 0; i < _nStates; ++i) {
+    for (unsigned int i = 0; i < _nStates; i++) {
         _vertexColor.resize(nNodesPerTimestep);
         fileStream2.read(reinterpret_cast<char*>(
             _vertexColor.data()), nNodesPerTimestep * sizeof(float)
@@ -497,7 +497,7 @@ void RenderableFluxNodes::loadNodeData(int energybinOption) {
         _statesColor.push_back(_vertexColor);
         _vertexColor.clear();
     }
-    for (unsigned int i = 0; i < _nStates; ++i) {
+    for (unsigned int i = 0; i < _nStates; i++) {
         _vertexRadius.resize(nNodesPerTimestep);
         fileStream3.read(reinterpret_cast<char*>(
             _vertexRadius.data()), nNodesPerTimestep * sizeof(float)
@@ -629,7 +629,7 @@ void RenderableFluxNodes::populateStartTimes() {
     }
     while (std::getline(tfs, line)) {   // for each line of data
         std::istringstream iss(line);
-        for (int i = 0; i < nColumns; ++i) {    // for each column in line
+        for (int i = 0; i < nColumns; i++) {    // for each column in line
             std::string columnValue;
             iss >> columnValue;
             if (i != nColumns - 1) {    // last column
@@ -646,8 +646,9 @@ void RenderableFluxNodes::populateStartTimes() {
                 _startTimes.push_back(triggerTime);
             }
             else {
-                LERROR(fmt::format("Error in file formating. Last column in ",
-                    "file '{}' is not on UTC ISO8601 format", timeFile
+                LERROR(fmt::format(
+                    "Error in file formating. Last column in file '{}' is not on UTC "
+                    "ISO8601 format", timeFile
                 ));
             }
         }

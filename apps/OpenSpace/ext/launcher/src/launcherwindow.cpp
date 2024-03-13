@@ -118,7 +118,7 @@ namespace {
                 parent,
                 "Exception",
                 QString::fromStdString(fmt::format(
-                    "ParsingError exception in {}: {}, {}",
+                    "ParsingError exception in '{}': {}, {}",
                     filename, e.component, e.message
                 ))
             );
@@ -129,7 +129,7 @@ namespace {
                 parent,
                 "Exception",
                 QString::fromStdString(fmt::format(
-                    "RuntimeError exception in {}, component {}: {}",
+                    "RuntimeError exception in '{}', component {}: {}",
                     filename, e.component, e.message
                 ))
             );
@@ -154,7 +154,7 @@ namespace {
                         parent,
                         "Exception",
                         QString::fromStdString(fmt::format(
-                            "Error writing data to file: '{}' as file is marked hidden",
+                            "Error writing data to file '{}' as file is marked hidden",
                             path
                         ))
                     );
@@ -166,7 +166,7 @@ namespace {
                 parent,
                 "Exception",
                 QString::fromStdString(fmt::format(
-                    "Error writing data to file: {} ({})", path, e.what()
+                    "Error writing data to file '{}': {}", path, e.what()
                 ))
             );
         }
@@ -189,7 +189,7 @@ namespace {
                 parent,
                 "Exception",
                 QString::fromStdString(fmt::format(
-                    "Error writing data to file: {} ({})", path, e.what()
+                    "Error writing data to file '{}': {}", path, e.what()
                 ))
             );
         }
@@ -507,7 +507,7 @@ void LauncherWindow::populateProfilesList(std::string preset) {
         std::optional<Profile> p = loadProfileFromFile(this, path.string());
         int idx = _profileBox->count() - 1;
         if (p.has_value() && (*p).meta.has_value()) {
-            const std::optional<std::string>& d = (*p).meta.value().description;
+            const std::optional<std::string>& d = p->meta.value().description;
             if (d.has_value()) {
                 // Tooltip has to be 'rich text' to linebreak properly
                 QString tooltip = QString::fromStdString(fmt::format("<p>{}</p>", *d));
@@ -543,7 +543,7 @@ void LauncherWindow::populateProfilesList(std::string preset) {
         std::optional<Profile> p = loadProfileFromFile(this, path.string());
         int idx = _profileBox->count() - 1;
         if (p.has_value() && (*p).meta.has_value()) {
-            const std::optional<std::string>& d = (*p).meta.value().description;
+            const std::optional<std::string>& d = p->meta.value().description;
             if (d.has_value()) {
                 // Tooltip has to be 'rich text' to linebreak properly
                 QString tooltip = QString::fromStdString(fmt::format("<p>{}</p>", *d));
@@ -573,9 +573,8 @@ void LauncherWindow::populateProfilesList(std::string preset) {
 
 // Returns 'true' if the file was a configuration file, 'false' otherwise
 bool handleConfigurationFile(QComboBox& box, const std::filesystem::directory_entry& p) {
-    const bool isXml = p.path().extension() == ".xml";
     const bool isJson = p.path().extension() == ".json";
-    if (!isXml && !isJson) {
+    if (!isJson) {
         return false;
     }
     box.addItem(QString::fromStdString(p.path().filename().string()));
@@ -596,11 +595,6 @@ bool handleConfigurationFile(QComboBox& box, const std::filesystem::directory_en
             );
             box.setItemData(box.count() - 1, toolTip, Qt::ToolTipRole);
         }
-    }
-
-    // For now, mark the XML configuration files to show that they are deprecated
-    if (isXml) {
-        box.setItemData(box.count() - 1, QBrush(Qt::darkYellow), Qt::ForegroundRole);
     }
 
     return true;
@@ -630,8 +624,6 @@ void LauncherWindow::populateWindowConfigsList(std::string preset) {
     _userConfigStartingIdx++;
     _preDefinedConfigStartingIdx++;
 
-    bool hasXmlConfig = false;
-
     // Sort files
     std::vector<fs::directory_entry> files;
     for (const fs::directory_entry& p : fs::directory_iterator(_userConfigPath)) {
@@ -639,7 +631,7 @@ void LauncherWindow::populateWindowConfigsList(std::string preset) {
     }
     std::sort(files.begin(), files.end());
 
-    // Add all the files with the .xml or .json extension to the dropdown
+    // Add all the files with the .json extension to the dropdown
     for (const fs::directory_entry& p : files) {
         bool isConfigFile = handleConfigurationFile(*_windowConfigBox, p);
         if (isConfigFile) {
@@ -647,7 +639,6 @@ void LauncherWindow::populateWindowConfigsList(std::string preset) {
             _userConfigStartingIdx++;
             _preDefinedConfigStartingIdx++;
         }
-        hasXmlConfig |= p.path().extension() == ".xml";
     }
     _windowConfigBox->addItem(QString::fromStdString("--- OpenSpace Configurations ---"));
     model = qobject_cast<const QStandardItemModel*>(_windowConfigBox->model());
@@ -661,10 +652,9 @@ void LauncherWindow::populateWindowConfigsList(std::string preset) {
             files.push_back(p);
         }
         std::sort(files.begin(), files.end());
-        // Add all the files with the .xml or .json extension to the dropdown
+        // Add all the files with the .json extension to the dropdown
         for (const fs::directory_entry& p : files) {
             handleConfigurationFile(*_windowConfigBox, p);
-            hasXmlConfig |= p.path().extension() == ".xml";
         }
     }
     else {
@@ -674,18 +664,7 @@ void LauncherWindow::populateWindowConfigsList(std::string preset) {
         );
     }
 
-    if (hasXmlConfig) {
-        // At least one XML configuration file is present, so we should show the tooltip
-        // informing the user that files will be deprecated
-        _windowConfigBox->setToolTip(
-            "Support for XML-based configuration files will be removed in the next "
-            "version of OpenSpace. Please convert the files to the new JSON format or "
-            "run the Node tool at "
-            "https://github.com/sgct/sgct/tree/master/support/config-converter"
-        );
-    }
-
-    // Always add the .cfg sgct default as first item
+    // Always add the .cfg SGCT default as first item
     _windowConfigBox->insertItem(
         _windowConfigBoxIndexSgctCfgDefault,
         QString::fromStdString(_sgctConfigName)
@@ -741,7 +720,8 @@ void LauncherWindow::onNewWindowConfigSelection(int newIndex) {
         _editWindowButton->setToolTip(
             QString::fromStdString(fmt::format(
                 "Cannot edit '{}'\nsince it is one of the configuration "
-                "files provided in the OpenSpace installation", fileSelected))
+                "files provided in the OpenSpace installation", fileSelected
+            ))
         );
     }
     else {
@@ -752,7 +732,8 @@ void LauncherWindow::onNewWindowConfigSelection(int newIndex) {
                 _editWindowButton->setEnabled(false);
                 _editWindowButton->setToolTip(QString::fromStdString(fmt::format(
                     "This file does not meet the minimum required version of {}.",
-                    versionMin.versionString())));
+                    versionMin.versionString()
+                )));
                 return;
             } 
         }
@@ -862,12 +843,10 @@ void LauncherWindow::openWindowEditor(const std::string& winCfg, bool isUserWinC
                 }
                 catch (const std::runtime_error& e) {
                     //Re-throw an SGCT error exception with the runtime exception message
-                    throw std::runtime_error(
-                        fmt::format(
-                            "Importing of this configuration file failed because of a "
-                            "problem detected in the readConfig function:\n\n{}", e.what()
-                        )
-                    );
+                    throw std::runtime_error(fmt::format(
+                        "Importing of this configuration file failed because of a "
+                        "problem detected in the readConfig function:\n\n{}", e.what()
+                    ));
                 }
                 SgctEdit editor(
                     preview,
@@ -888,7 +867,7 @@ void LauncherWindow::openWindowEditor(const std::string& winCfg, bool isUserWinC
                 editRefusalDialog(
                     "File Format Version Error",
                     fmt::format(
-                        "File '{}' does not meet the minimum required version of {}.",
+                        "File '{}' does not meet the minimum required version of {}",
                         winCfg, versionMin.versionString()
                     ),
                     ""

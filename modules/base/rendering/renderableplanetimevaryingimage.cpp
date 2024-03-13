@@ -97,7 +97,7 @@ RenderablePlaneTimeVaryingImage::RenderablePlaneTimeVaryingImage(
     _sourceFolder = p.sourceFolder;
     if (!std::filesystem::is_directory(absPath(_sourceFolder))) {
         LERROR(fmt::format(
-            "Time varying image, {} is not a valid directory",
+            "Time varying image, '{}' is not a valid directory",
             _sourceFolder.value()
         ));
     }
@@ -143,7 +143,7 @@ void RenderablePlaneTimeVaryingImage::initializeGL() {
     RenderablePlane::initializeGL();
 
     _textureFiles.resize(_sourceFiles.size());
-    for (size_t i = 0; i < _sourceFiles.size(); ++i) {
+    for (size_t i = 0; i < _sourceFiles.size(); i++) {
         _textureFiles[i] = ghoul::io::TextureReader::ref().loadTexture(
             absPath(_sourceFiles[i]).string(),
             2
@@ -175,7 +175,7 @@ bool RenderablePlaneTimeVaryingImage::extractMandatoryInfoFromDictionary() {
     // Ensure that there are available and valid source files left
     if (_sourceFiles.empty()) {
         LERROR(fmt::format(
-            "{}: Plane sequence filepath {} was empty",
+            "{}: Plane sequence filepath '{}' was empty",
             _identifier, _sourceFolder.value()
         ));
         return false;

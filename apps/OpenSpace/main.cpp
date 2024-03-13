@@ -198,7 +198,7 @@ LONG WINAPI generateMiniDump(EXCEPTION_POINTERS* exceptionPointers) {
 void checkJoystickStatus() {
     using namespace interaction;
 
-    for (int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; ++i) {
+    for (int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; i++) {
         ZoneScopedN("Joystick state");
 
         JoystickInputState& state = global::joystickInputStates->at(i);
@@ -228,7 +228,7 @@ void checkJoystickStatus() {
         std::memcpy(state.axes.data(), axes, state.nAxes * sizeof(float));
 
         const unsigned char* buttons = glfwGetJoystickButtons(i, &state.nButtons);
-        for (int j = 0; j < state.nButtons; ++j) {
+        for (int j = 0; j < state.nButtons; j++) {
             const bool currentlyPressed = buttons[j] == GLFW_PRESS;
 
             if (currentlyPressed) {
@@ -340,7 +340,7 @@ void mainInitFunc(GLFWwindow*) {
         }
     }
 
-    for (size_t i = 0; i < Engine::instance().windows().size(); ++i) {
+    for (size_t i = 0; i < Engine::instance().windows().size(); i++) {
         Window& window = *Engine::instance().windows()[i];
         if (!window.hasTag(SpoutTag)) {
             continue;
@@ -620,14 +620,11 @@ void mainCharCallback(unsigned int codepoint, int modifiers, sgct::Window* windo
 
 
 
-void mainDropCallback(int amount, const char** paths) {
+void mainDropCallback(std::vector<std::string_view> paths) {
     ZoneScoped;
 
-    ghoul_assert(amount > 0, "Expected at least one file path");
-    ghoul_assert(paths, "expected non-nullptr");
-
-    for (int i = 0; i < amount; ++i) {
-        global::openSpaceEngine->handleDragDrop(paths[i]);
+    for (std::string_view path : paths) {
+        global::openSpaceEngine->handleDragDrop(path);
     }
 }
 
@@ -957,7 +954,7 @@ void setSgctDelegateFunctions() {
 
         return currentWindow->swapGroupFrameNumber();
     };
-    sgctDelegate.setScreenshotFolder = [](std::string path) {
+    sgctDelegate.setScreenshotFolder = [](std::filesystem::path path) {
         sgct::Settings::instance().setCapturePath(std::move(path));
     };
     sgctDelegate.showStatistics = [](bool enabled) {
@@ -1003,7 +1000,7 @@ void setSgctDelegateFunctions() {
 void checkCommandLineForSettings(int& argc, char** argv, bool& hasSGCT, bool& hasProfile,
                                  std::string& sgctFunctionName)
 {
-    for (int i = 1; i < argc; ++i) {
+    for (int i = 1; i < argc; i++) {
         const std::string arg = argv[i];
         if (arg == "-c" || arg == "--config") {
             std::string p = ((i + 1) < argc) ? argv[i + 1] : "";
@@ -1068,25 +1065,19 @@ std::string selectedSgctProfileFromLauncher(LauncherWindow& lw, bool hasCliSGCTC
             std::filesystem::path cj = c;
             cj.replace_extension(".json");
 
-            std::filesystem::path cx = c;
-            cx.replace_extension(".xml");
-
             if (c.extension().empty()) {
                 if (std::filesystem::exists(cj)) {
                     config += ".json";
                 }
-                else if (std::filesystem::exists(cx)) {
-                    config += ".xml";
-                }
                 else {
                     throw ghoul::RuntimeError(fmt::format(
-                        "Error loading configuration file {}. File could not be found",
+                        "Error loading configuration file '{}'. File could not be found",
                         config
                     ));
                 }
             }
             else {
-                // user customzied sgct config
+                // user customized SGCT config
             }
         }
         global::configuration->windowConfiguration = config;
@@ -1132,7 +1123,7 @@ int main(int argc, char* argv[]) {
         std::filesystem::current_path() / std::filesystem::path(argv[0]).parent_path(),
         ghoul::filesystem::FileSystem::Override::Yes
     );
-    LDEBUG(fmt::format("Registering ${{BIN}} to {}", absPath("${BIN}")));
+    LDEBUG(fmt::format("Registering ${{BIN}} to '{}'", absPath("${BIN}")));
 
     //
     // Parse commandline arguments
@@ -1216,11 +1207,11 @@ int main(int argc, char* argv[]) {
         if (!std::filesystem::is_regular_file(configurationFilePath)) {
             LFATALC(
                 "main",
-                fmt::format("Could not find configuration {}", configurationFilePath)
+                fmt::format("Could not find configuration '{}'", configurationFilePath)
             );
             exit(EXIT_FAILURE);
         }
-        LINFO(fmt::format("Configuration Path: {}", configurationFilePath));
+        LINFO(fmt::format("Configuration Path '{}'", configurationFilePath));
 
         // Register the base path as the directory where the configuration file lives
         std::filesystem::path base = configurationFilePath.parent_path();
@@ -1342,7 +1333,7 @@ int main(int argc, char* argv[]) {
                 "OpenSpace",
                 QString::fromStdString(fmt::format(
                     "The OpenSpace folder is started must not contain any of \"'\", "
-                    "\"\"\", [, or ]. Path is: '{}'. Unexpected errors will occur when "
+                    "\"\"\", [, or ]. Path is: {}. Unexpected errors will occur when "
                     "proceeding to run the software", pwd
                 ))
             );

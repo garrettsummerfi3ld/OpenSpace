@@ -575,7 +575,7 @@ void convertVersion10to11(nlohmann::json& profile) {
 
     std::vector<version10::Keybinding> kbs =
         profile.at("keybindings").get<std::vector<version10::Keybinding>>();
-    for (size_t i = 0; i < kbs.size(); ++i) {
+    for (size_t i = 0; i < kbs.size(); i++) {
         version10::Keybinding& kb = kbs[i];
         std::string identifier = fmt::format("profile.keybind.{}", i);
 
@@ -750,7 +750,7 @@ Profile::Profile(const std::filesystem::path& path) {
     }
     catch (const std::ifstream::failure& e) {
         throw ghoul::RuntimeError(fmt::format(
-            "Exception opening profile file for read: {} ({})", path, e.what()
+            "Exception opening profile file for read '{}': {}", path, e.what()
         ));
     }
 

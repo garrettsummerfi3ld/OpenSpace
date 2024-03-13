@@ -152,7 +152,7 @@ void GlobeGeometryFeature::updateTexture(bool isInitializeStep) {
     }
     else {
         LERROR(fmt::format(
-            "Trying to use texture file that does not exist: {} ", texturePath
+            "Trying to use texture file that does not exist: {}", texturePath
         ));
     }
 }
@@ -219,7 +219,7 @@ void GlobeGeometryFeature::createFromSingleGeosGeometry(const geos::geom::Geomet
                     _geoCoordinates.push_back(outerBoundsGeoCoords);
 
                     // Inner bounds (holes)
-                    for (int i = 0; i < nHoles; ++i) {
+                    for (int i = 0; i < nHoles; i++) {
                         const geos::geom::LinearRing* hole =
                             pNormalized->getInteriorRingN(i);
                         std::vector<Geodetic3> ringGeoCoords =
@@ -234,7 +234,7 @@ void GlobeGeometryFeature::createFromSingleGeosGeometry(const geos::geom::Geomet
             catch (geos::util::IllegalStateException& e) {
                 throw ghoul::RuntimeError(fmt::format(
                     "Non-simple (e.g. self-intersecting) polygons not supported yet. "
-                    "GEOS error: '{}'", e.what()
+                    "GEOS error: {}", e.what()
                 ));
 
                 // TODO: handle self-intersections points
@@ -555,7 +555,7 @@ std::vector<std::vector<glm::vec3>> GlobeGeometryFeature::createLineGeometry() {
     std::vector<std::vector<glm::vec3>> resultPositions;
     resultPositions.reserve(_geoCoordinates.size());
 
-    for (size_t i = 0; i < _geoCoordinates.size(); ++i) {
+    for (size_t i = 0; i < _geoCoordinates.size(); i++) {
         std::vector<Vertex> vertices;
         std::vector<glm::vec3> positions;
         // TODO: this is not correct anymore
@@ -639,7 +639,7 @@ void GlobeGeometryFeature::createPointGeometry() {
         return;
     }
 
-    for (size_t i = 0; i < _geoCoordinates.size(); ++i) {
+    for (size_t i = 0; i < _geoCoordinates.size(); i++) {
         std::vector<Vertex> vertices;
         vertices.reserve(_geoCoordinates[i].size());
 

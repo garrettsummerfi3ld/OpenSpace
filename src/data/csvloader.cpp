@@ -79,7 +79,7 @@ Dataset loadCsvFile(std::filesystem::path filePath, std::optional<DataMapping> s
 
     if (rows.size() < 2) {
         LWARNING(fmt::format(
-            "Error loading data file {}. No data items read", filePath
+            "Error loading data file '{}'. No data items read", filePath
         ));
         return Dataset();
     }
@@ -102,7 +102,7 @@ Dataset loadCsvFile(std::filesystem::path filePath, std::optional<DataMapping> s
         skipColumns.reserve((*specs).excludeColumns.size());
     }
 
-    for (size_t i = 0; i < columns.size(); ++i) {
+    for (size_t i = 0; i < columns.size(); i++) {
         const std::string& col = columns[i];
 
         if (isPositionColumn(col, specs)) {
@@ -135,13 +135,11 @@ Dataset loadCsvFile(std::filesystem::path filePath, std::optional<DataMapping> s
     if (xColumn < 0 || yColumn < 0 || zColumn < 0) {
         // One or more position columns weren't read
         LERROR(fmt::format(
-            "Error loading data file {}. Missing X, Y or Z position column", filePath
+            "Error loading data file '{}'. Missing X, Y or Z position column", filePath
         ));
     }
 
-    LINFO(fmt::format(
-        "Loading {} rows with {} columns", rows.size(), columns.size()
-    ));
+    LINFO(fmt::format("Loading {} rows with {} columns", rows.size(), columns.size()));
     ProgressBar progress = ProgressBar(static_cast<int>(rows.size()));
 
     // Skip first row (column names)
@@ -151,7 +149,7 @@ Dataset loadCsvFile(std::filesystem::path filePath, std::optional<DataMapping> s
         Dataset::Entry entry;
         entry.data.reserve(nDataColumns);
 
-        for (size_t i = 0; i < row.size(); ++i) {
+        for (size_t i = 0; i < row.size(); i++) {
             // Check if column should be exluded. Note that list of indices is sorted
             // so we can do a binary search
             if (hasExcludeColumns &&

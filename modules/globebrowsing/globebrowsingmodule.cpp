@@ -181,7 +181,6 @@ namespace {
     }
 
     struct [[codegen::Dictionary(GlobeBrowsingModule)]] Parameters {
-
         // [[codegen::verbatim(TileCacheSizeInfo.description)]]
         std::optional<int> tileCacheSize;
 
@@ -232,7 +231,7 @@ void GlobeBrowsingModule::internalInitialize(const ghoul::Dictionary& dict) {
         else {
             LWARNINGC(
                 "GlobeBrowsingModule",
-                fmt::format(
+                std::format(
                     "The provided texture file '{}' for the default geo point texture "
                     "does not exist", path
                 )

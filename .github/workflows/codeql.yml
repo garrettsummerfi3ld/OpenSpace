@@ -51,14 +51,12 @@ jobs:
         swap-storage: true
 
     - name: Install dependencies
-      if: matrix.os != 'self-hosted'
       run: |
         sudo apt-get update
         sudo apt-get install -y gdal-bin libgdal-dev libxrandr-dev libxinerama-dev xorg-dev libxcursor-dev libxi-dev libasound2-dev libgdal-dev libboost-dev freeglut3-dev glew-utils libpng-dev libcurl4-openssl-dev libmpv-dev libvulkan-dev zlib1g-dev
     
     # Qt is not friendly to install manually, nor any runner has Qt installed by default, this action resolves this issue
     - name: Install Qt6
-      if: matrix.os != 'self-hosted'
       uses: jurplel/install-qt-action@v3.0.0
       with:
         version: 6.5

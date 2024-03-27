@@ -54,8 +54,7 @@ void EventEngine::postFrameCleanup() {
 #endif // _DEBUG
 }
 
-void EventEngine::registerEventAction(events::Event::Type type,
-                                      std::string identifier,
+void EventEngine::registerEventAction(events::Event::Type type, std::string identifier,
                                       std::optional<ghoul::Dictionary> filter)
 {
     ActionInfo ai;
@@ -79,7 +78,7 @@ void EventEngine::registerEventTopic(size_t topicId, events::Event::Type type,
                                      ScriptCallback callback)
 {
     TopicInfo ti;
-    ti.id = topicId;
+    ti.id = static_cast<uint32_t>(topicId);
     ti.callback = std::move(callback);
 
     _eventTopics[type].push_back(ti);
@@ -170,6 +169,12 @@ std::vector<EventEngine::ActionInfo> EventEngine::registeredActions() const {
     return result;
 }
 
+const std::unordered_map<events::Event::Type, std::vector<EventEngine::ActionInfo>>&
+EventEngine::eventActions() const
+{
+    return _eventActions;
+}
+
 void EventEngine::enableEvent(uint32_t identifier) {
     using Type = events::Event::Type;
     for (std::pair<const Type, std::vector<ActionInfo>>& p : _eventActions) {
@@ -257,5 +262,4 @@ scripting::LuaLibrary EventEngine::luaLibrary() {
         }
     };
 }
-
 } // namespace openspace

@@ -53,6 +53,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
+        sudo apt-get upgrade -y
         sudo apt-get install -y ca-certificates gpg wget gdal-bin libgdal-dev libxrandr-dev libxinerama-dev xorg-dev libxcursor-dev libxi-dev libasound2-dev libgdal-dev libboost-dev freeglut3-dev glew-utils libpng-dev libcurl4-openssl-dev libmpv-dev libvulkan-dev zlib1g-dev cmake
     
     # Qt is not friendly to install manually, nor any runner has Qt installed by default, this action resolves this issue

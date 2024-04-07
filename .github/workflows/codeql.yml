@@ -89,7 +89,20 @@ jobs:
 
     # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
     - name: Autobuild
+      if: matrix.os != 'self-hosted'
       uses: github/codeql-action/autobuild@v3
+
+    # If the analyze step fails for one of the languages you are analyzing with
+    # "We were unable to automatically build your code", modify the matrix above
+    # to set the build mode to "manual" for that language. Then modify this step
+    # to build your code.
+    # ℹ️ Command-line programs to run using the OS shell.
+    # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+    - name: Manual build
+      if: matrix.os == 'self-hosted'
+      run: |
+        cmake -B ${{ github.workspace }}/build -DOPENSPACE_ENABLE_ALL_MODULES=ON -DCMAKE_CXX_FLAGS:STRING=-DGLM_ENABLE_EXPERIMENTAL -DOpenGL_GL_PREFERENCE:STRING=GLVND -DASSIMP_BUILD_MINIZIP=1
+        cmake --build ${{ github.workspace }}/build --target OpenSpace
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3

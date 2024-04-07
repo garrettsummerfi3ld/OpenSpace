@@ -32,7 +32,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, ubuntu-22.04]
-        qt-ver: [apt, 6.2, 6.5]
+        qt-ver: [apt, 6.2, 6.5, 6.7]
         compiler:
           - { compiler: GCC 11, cc: gcc-11, cxx: g++-11 }
           - { compiler: GCC 12, cc: gcc-12, cxx: g++-12 }
@@ -137,7 +137,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, windows-2022, windows-2019]
-        qt-ver: [6.2, 6.5]
+        qt-ver: [6.2, 6.5, 6.7]
     runs-on: ${{ matrix.os }}
     name: Build on ${{ matrix.os }} (Qt ${{ matrix.qt-ver }})
     env:
@@ -188,7 +188,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest, macos-14, macos-13, macos-12]
-        qt-ver: [6.2, 6.5]
+        qt-ver: [6.2, 6.5, 6.7]
         xcode-ver: ['latest-stable', 'latest', 'default']
     runs-on: ${{ matrix.os }}
     name: Build on ${{ matrix.os }} (Xcode ${{matrix.xcode-ver}}/Qt ${{ matrix.qt-ver }})

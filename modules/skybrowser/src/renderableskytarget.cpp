@@ -50,24 +50,24 @@ namespace {
     constexpr openspace::properties::Property::PropertyInfo crossHairSizeInfo = {
         "CrosshairSize",
         "Crosshair Size",
-        "Determines the size of the crosshair. The size is determined in fov (degrees)",
+        "The size of the crosshair given as a field of view (in degrees).",
         openspace::properties::Property::Visibility::User
     };
 
     constexpr openspace::properties::Property::PropertyInfo RectangleThresholdInfo = {
         "RectangleThreshold",
         "Rectangle Threshold",
-        "When the field of view is larger than the rectangle threshold, a rectangle will "
-        "be rendered in the target",
-        // @VISIBILITY(2.33)
+        "A threshold value for the vertical field of view, in degrees, that decides when "
+        "a rectangle will be used to visualize the target in addition to the crosshair. "
+        "When the field of view is smaller than this value, only the crosshair will be "
+        "shown.",
         openspace::properties::Property::Visibility::User
     };
 
     constexpr openspace::properties::Property::PropertyInfo LineWidthInfo = {
         "LineWidth",
         "Line Width",
-        "The thickness of the line of the target. The larger number, the thicker line",
-        // @VISIBILITY(1.33)
+        "The thickness of the line of the target. The larger number, the thicker line.",
         openspace::properties::Property::Visibility::NoviceUser
     };
 
@@ -75,16 +75,15 @@ namespace {
         "VerticalFov",
         "Vertical Field Of View",
         "The vertical field of view of the target.",
-        // @VISIBILITY(2.33)
         openspace::properties::Property::Visibility::User
     };
 
     constexpr openspace::properties::Property::PropertyInfo ApplyRollInfo = {
        "ApplyRoll",
        "Apply Roll",
-       "Always rotate the target to have it's up direction aligned with the up direction "
-       "of the camera",
-        openspace::properties::Property::Visibility::User
+       "If true, always rotate the target to have its up direction aligned with the up "
+       "direction of the camera.",
+       openspace::properties::Property::Visibility::User
     };
 
     struct [[codegen::Dictionary(RenderableSkyTarget)]] Parameters {

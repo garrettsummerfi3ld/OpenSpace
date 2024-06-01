@@ -40,23 +40,17 @@
 #include <optional>
 
 namespace {
-    constexpr std::array<const char*, 6> UniformNames = {
-        "opacity", "modelViewProjection", "modelViewTransform", "modelViewRotation",
-        "colorTexture", "mirrorTexture"
-    };
-
     constexpr openspace::properties::Property::PropertyInfo SizeInfo = {
         "Size",
         "Size (in meters)",
-        "This value specifies the radius of the sphere in meters",
+        "The radius of the sphere in meters.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo SegmentsInfo = {
         "Segments",
         "Number of Segments",
-        "This value specifies the number of segments that the sphere is separated in",
-        // @VISIBILITY(2.67)
+        "The number of segments that the sphere is split into.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
@@ -70,40 +64,39 @@ namespace {
         "Orientation",
         "Orientation",
         "Specifies whether the texture is applied to the inside of the sphere, the "
-        "outside of the sphere, or both",
+        "outside of the sphere, or both.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo MirrorTextureInfo = {
         "MirrorTexture",
         "Mirror Texture",
-        "Mirror the texture along the x-axis",
+        "If true, mirror the texture along the x-axis.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo DisableFadeInOutInfo = {
         "DisableFadeInOut",
         "Disable Fade-In/Fade-Out effects",
-        "Enables/Disables the fade in and out effects",
+        "Enables/Disables the fade in and out effects.",
         openspace::properties::Property::Visibility::User
     };
 
     constexpr openspace::properties::Property::PropertyInfo FadeInThresholdInfo = {
         "FadeInThreshold",
         "Fade-In Threshold",
-        "This value determines the distance from center of MilkyWay from where the "
-        "astronomical object starts to fade in, given as a percentage of the size of "
-        "the object. A negative or zero value means no fading in will happen. This is "
-        "also the default",
+        "The distance from the center of the Milky Way at which the sphere should start "
+        "to fade in, given as a percentage of the size of the object. A value of zero "
+        "means that no fading in will happen.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo FadeOutThresholdInfo = {
         "FadeOutThreshold",
         "Fade-Out Threshold",
-        "This value determines percentage of the sphere that is visible before starting "
-        "to fade it out. A negative or zero value means no fading out will happen. This "
-        "is also the default",
+        "A threshold for when the sphere should start fading out, given as a percentage "
+        "of how much of the sphere that is visible before the fading should start. A "
+        "value of zero means that no fading out will happen.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
@@ -151,8 +144,8 @@ RenderableSphere::RenderableSphere(const ghoul::Dictionary& dictionary)
     , _orientation(OrientationInfo, properties::OptionProperty::DisplayType::Dropdown)
     , _mirrorTexture(MirrorTextureInfo, false)
     , _disableFadeInDistance(DisableFadeInOutInfo, false)
-    , _fadeInThreshold(FadeInThresholdInfo, -1.f, -0.1f, 1.f, 0.001f)
-    , _fadeOutThreshold(FadeOutThresholdInfo, -1.f, -0.1f, 1.f, 0.001f)
+    , _fadeInThreshold(FadeInThresholdInfo, 0.f, 0.f, 1.f, 0.001f)
+    , _fadeOutThreshold(FadeOutThresholdInfo, 0.f, 0.f, 1.f, 0.001f)
 {
     const Parameters p = codegen::bake<Parameters>(dictionary);
 
@@ -216,7 +209,7 @@ void RenderableSphere::initializeGL() {
         }
     );
 
-    ghoul::opengl::updateUniformLocations(*_shader, _uniformCache, UniformNames);
+    ghoul::opengl::updateUniformLocations(*_shader, _uniformCache);
 }
 
 void RenderableSphere::deinitializeGL() {
@@ -364,7 +357,7 @@ void RenderableSphere::render(const RenderData& data, RendererTasks&) {
 void RenderableSphere::update(const UpdateData&) {
     if (_shader->isDirty()) {
         _shader->rebuildFromFile();
-        ghoul::opengl::updateUniformLocations(*_shader, _uniformCache, UniformNames);
+        ghoul::opengl::updateUniformLocations(*_shader, _uniformCache);
     }
 
     if (_sphereIsDirty) {

@@ -43,7 +43,7 @@ namespace {
     constexpr openspace::properties::Property::PropertyInfo AtmosphereHeightInfo = {
         "AtmosphereHeight",
         "Atmosphere Height (KM)",
-        "The thickness of the atmosphere in km",
+        "The thickness of the atmosphere in kilometers.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
@@ -52,22 +52,22 @@ namespace {
         "AverageGroundReflectance",
         "Average Ground Reflectance (%)",
         "Average percentage of light reflected by the ground during the pre-calculation "
-        "phase",
+        "phase.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo GroundRadianceEmissionInfo = {
         "GroundRadianceEmission",
         "Percentage of initial radiance emitted from ground",
-        "Multiplier of the ground radiance color during the rendering phase",
+        "Multiplier of the ground radiance color during the rendering phase.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo RayleighHeightScaleInfo = {
         "RayleighHeightScale",
         "Rayleigh Scale Height (KM)",
-        "It is the vertical distance over which the density and pressure fall by a "
-        "constant factor",
+        "The vertical distance over which the density and pressure falls by a constant "
+        "factor.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
@@ -75,46 +75,44 @@ namespace {
     {
         "RayleighScatteringCoeff",
         "Rayleigh Scattering Coeff",
-        "Rayleigh sea-level scattering coefficients in meters",
+        "Rayleigh sea-level scattering coefficients in meters.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo OzoneLayerInfo = {
         "Ozone",
         "Ozone Layer Enabled",
-        "Enables/Disable Ozone Layer during pre-calculation phase",
+        "Enables/Disable Ozone Layer during pre-calculation phase.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo OzoneHeightScaleInfo = {
         "OzoneLayerHeightScale",
-        "Ozone Scale Height (KM)",
-        "It is the vertical distance over which the density and pressure fall by a "
-        "constant factor",
+        "Ozone Scale Height (km)",
+        "The vertical distance over which the density and pressure fall by a constant "
+        "factor, given in kilometers.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo OzoneLayerCoeffInfo = {
         "OzoneLayerCoeff",
-        "Ozone Layer Extinction Coeff",
-        "Ozone scattering coefficients in meters",
+        "Ozone Layer Extinction Coefficient",
+        "Ozone scattering coefficients in meters.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo MieHeightScaleInfo = {
         "MieHeightScale",
-        "Mie Scale Height (KM)",
-        "It is the vertical distance over which the density and pressure fall by a "
-        "constant factor",
-        // @VISIBILITY(3.2)
+        "Mie Scale Height (km)",
+        "The vertical distance over which the density and pressure fall by a constant "
+        "factor, given in kilometers.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo MieScatteringCoeffInfo = {
         "MieScatteringCoeff",
-        "Mie Scattering Coeff",
-        "Mie sea-level scattering coefficients in meters",
-        // @VISIBILITY(3.2)
+        "Mie Scattering Coefficient",
+        "Mie sea-level scattering coefficients in meters.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
@@ -123,24 +121,21 @@ namespace {
     {
         "MieScatteringExtinctionPropCoefficient",
         "Mie Scattering/Extinction Proportion Coefficient (%)",
-        "Mie Scattering/Extinction Proportion Coefficient (%)",
-        // @VISIBILITY(3.2)
+        "Mie Scattering/Extinction Proportion Coefficient.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo MieAsymmetricFactorGInfo = {
         "MieAsymmetricFactorG",
         "Mie Asymmetric Factor G",
-        "Averaging of the scattering angle over a high number of scattering events",
-        // @VISIBILITY(3.2)
+        "Averaging of the scattering angle over a high number of scattering events.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo SunIntensityInfo = {
         "SunIntensity",
         "Sun Intensity",
-        "Unitless for now",
-        // @VISIBILITY(2.6)
+        "A unitless value that controls the intensity/brightness of the Sun.",
         openspace::properties::Property::Visibility::User
     };
 
@@ -149,22 +144,21 @@ namespace {
     {
         "SunFollowingCamera",
         "Enable Sun On Camera Position",
-        "When selected the Sun is artificially positioned behind the observer all times",
+        "When selected the Sun is artificially positioned behind the observer all times.",
         openspace::properties::Property::Visibility::User
     };
 
     constexpr openspace::properties::Property::PropertyInfo EclipseHardShadowsInfo = {
-        "EclipseHardShadowsInfo",
+        "EclipseHardShadows",
         "Enable Hard Shadows for Eclipses",
-        "Enable/Disables hard shadows through the atmosphere",
-        // @VISIBILITY(2.8)
+        "Enables/Disables hard shadows through the atmosphere.",
         openspace::properties::Property::Visibility::User
     };
 
     constexpr openspace::properties::Property::PropertyInfo AtmosphereDimmingHeightInfo ={
         "AtmosphereDimmingHeight",
         "Atmosphere Dimming Height",
-        "Percentage of the atmosphere where other objects, such as the stars, are faded",
+        "Percentage of the atmosphere where other objects, such as the stars, are faded.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
@@ -172,57 +166,56 @@ namespace {
         "AtmosphereDimmingSunsetAngle",
         "Atmosphere Dimming Sunset Angle",
         "The angle (degrees) between the Camera and the Sun where the sunset starts, and "
-        "the atmosphere starts to fade in objects such as the stars",
+        "the atmosphere starts to fade in objects such as the stars.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo SunAngularSize = {
         "SunAngularSize",
         "Angular Size of the Sun",
-        "Specifies the angular size of the Sun in degrees",
+        "The angular size of the Sun in degrees.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo LightSourceNodeInfo = {
         "LightSourceNode",
-        "Name of the light source",
-        "This value is the name of a scene graph node that should be used as the source "
-        "of illumination for the atmosphere. If this value is not specified, the solar "
-        "system's Sun is used instead",
+        "Light Source",
+        "The name of a scene graph node to be used as the source of illumination "
+        "for the atmosphere. If not specified, the solar system's Sun is used.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     struct [[codegen::Dictionary(RenderableAtmosphere)]] Parameters {
         struct ShadowGroup {
-            // Individual light sources
+            // Individual light sources.
             struct SourceElement {
-                // The scene graph node name of the source
+                // The scene graph node name of the source.
                 std::string name;
-                // The radius of the object in meters
+                // The radius of the object in meters.
                 double radius;
             };
-            // A list of light sources
+            // A list of light sources.
             std::vector<SourceElement> sources;
 
-            // Individual shadow casters
+            // Individual shadow casters.
             struct CasterElement {
-                // The scene graph node name of the source
+                // The scene graph node name of the source.
                 std::string name;
-                // The radius of the object in meters
+                // The radius of the object in meters.
                 double radius;
             };
 
-            // A list of objects that cast light on this atmosphere
+            // A list of objects that cast light on this atmosphere.
             std::vector<CasterElement> casters;
         };
         // Declares shadow groups, meaning which nodes are considered in shadow
-        // calculations
+        // calculations.
         std::optional<ShadowGroup> shadowGroup;
 
         // [[codegen::verbatim(AtmosphereHeightInfo.description)]]
         float atmosphereHeight;
 
-        // The radius of the planet in meters
+        // The radius of the planet in meters.
         float planetRadius;
 
         float planetAverageGroundReflectance;

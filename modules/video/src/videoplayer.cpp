@@ -44,19 +44,19 @@ namespace {
     constexpr openspace::properties::Property::PropertyInfo VideoInfo = {
         "Video",
         "Video",
-        "This should point to the video file that should be played."
+        "The video file that is played."
     };
 
     constexpr openspace::properties::Property::PropertyInfo PlayInfo = {
         "Play",
         "Play",
-        "Play video"
+        "Play video."
     };
 
     constexpr openspace::properties::Property::PropertyInfo PauseInfo = {
         "Pause",
         "Pause",
-        "Pause video"
+        "Pause video."
     };
 
     constexpr openspace::properties::Property::PropertyInfo GoToStartInfo = {
@@ -75,7 +75,7 @@ namespace {
     constexpr openspace::properties::Property::PropertyInfo AudioInfo = {
         "PlayAudio",
         "Play Audio",
-        "Play audio"
+        "Play audio."
     };
 
     constexpr openspace::properties::Property::PropertyInfo StartTimeInfo = {
@@ -101,7 +101,7 @@ namespace {
 
     struct [[codegen::Dictionary(VideoPlayer)]] Parameters {
         // [[codegen::verbatim(VideoInfo.description)]]
-        std::string video;
+        std::filesystem::path video;
 
         // [[codegen::verbatim(AudioInfo.description)]]
         std::optional<bool> playAudio;
@@ -446,7 +446,7 @@ void VideoPlayer::initializeMpv() {
     );
 
     // Load file
-    const std::string file = _videoFile;
+    const std::string file = _videoFile.string();
     const char* cmd[] = { "loadfile", file.c_str(), nullptr };
     result = mpv_command(_mpvHandle, cmd);
     if (!checkMpvError(result)) {

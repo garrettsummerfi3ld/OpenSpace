@@ -43,7 +43,7 @@ namespace {
         "Quality of Texture",
         "A parameter to set the resolution of the texture. 1 is full resolution and "
         "slower frame rate. Lower value means lower resolution of texture and faster "
-        "frame rate",
+        "frame rate.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
@@ -53,15 +53,14 @@ namespace {
         "Display a copy of this sky browser at an additional position. This copy will "
         "not be interactive. The position is in RAE (Radius, Azimuth, Elevation) "
         "coordinates or Cartesian, depending on if the browser uses RAE or Cartesian "
-        "coordinates",
-        // @VISIBILITY(2.67)
+        "coordinates.",
         openspace::properties::Property::Visibility::User
     };
 
     constexpr openspace::properties::Property::PropertyInfo DisplayCopyShowInfo = {
         "ShowDisplayCopy",
         "Show Display Copy",
-        "Show the display copy",
+        "Show the display copy.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
@@ -69,7 +68,7 @@ namespace {
         "IsHidden",
         "Is Hidden",
         "If checked, the browser will be not be displayed. If it is not checked, it will "
-        "be",
+        "be.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
@@ -78,7 +77,6 @@ namespace {
         "Point Spacecraft",
         "If checked, spacecrafts will point towards the coordinate of an image upon "
         "selection.",
-        // @VISIBILITY(?)
         openspace::properties::Property::Visibility::User
     };
 
@@ -90,6 +88,13 @@ namespace {
         openspace::properties::Property::Visibility::User
     };
 
+    // This `ScreenSpaceRenderable` is used to display a screen space window showing the
+    // integrated World Wide Telescope view. The view will be dynamically updated when
+    // interacting with the view or with images in the SkyBrowser panel.
+    //
+    // A `ScreenSpaceSkyBrowser` should not be created from a `.asset` file, but is rather
+    // created from interacting with the SkyBrowser user interface panel. If created in
+    // an asset, it requires some extra scripting to work with the SkyBrowser feature.
     struct [[codegen::Dictionary(ScreenSpaceSkyBrowser)]] Parameters {
         // [[codegen::verbatim(TextureQualityInfo.description)]]
         std::optional<float> textureQuality;

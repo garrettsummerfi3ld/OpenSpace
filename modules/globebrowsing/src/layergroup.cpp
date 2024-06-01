@@ -40,8 +40,7 @@ namespace {
         "Blend between levels",
         "If this value is enabled, images between different levels are interpolated, "
         "rather than switching between levels abruptly. This makes transitions smoother "
-        "and more visually pleasing",
-        // @VISIBILITY(2.75)
+        "and more visually pleasing.",
         openspace::properties::Property::Visibility::User
     };
 } // namespace
@@ -178,12 +177,15 @@ void LayerGroup::deleteLayer(const std::string& layerName) {
                 layerGroup->identifier(),
                 it->get()->identifier()
             );
+            // We need to keep the name of the layer since we only get it as a reference
+            // and the name needs to survive the deletion
+            const std::string lName = layerName;
             _layers.erase(it);
             update();
             if (_onChangeCallback) {
                 _onChangeCallback(nullptr);
             }
-            LINFO("Deleted layer " + layerName);
+            LINFO(std::format("Deleted layer {}", lName));
 
             if (_layers.empty()) {
                 _levelBlendingEnabled.setVisibility(

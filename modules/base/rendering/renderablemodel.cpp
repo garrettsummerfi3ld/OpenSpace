@@ -69,119 +69,102 @@ namespace {
 
     constexpr glm::vec4 PosBufferClearVal = glm::vec4(1e32, 1e32, 1e32, 1.f);
 
-    constexpr std::array<const char*, 26> UniformNames = {
-        "modelViewTransform", "projectionTransform", "normalTransform", "meshTransform",
-        "meshNormalTransform", "ambientIntensity", "diffuseIntensity",
-        "specularIntensity", "performShading", "use_forced_color", "has_texture_diffuse",
-        "has_texture_normal", "has_texture_specular", "has_color_specular",
-        "texture_diffuse", "texture_normal", "texture_specular", "color_diffuse",
-        "color_specular", "opacity", "nLightSources", "lightDirectionsViewSpace",
-        "lightIntensities", "performManualDepthTest", "gBufferDepthTexture", "resolution"
-    };
-
-    constexpr std::array<const char*, 5> UniformOpacityNames = {
-        "opacity", "colorTexture", "depthTexture", "viewport", "resolution"
-    };
-
     constexpr openspace::properties::Property::PropertyInfo EnableAnimationInfo = {
         "EnableAnimation",
         "Enable Animation",
-        "Enable or disable the animation for the model if it has any",
+        "Enable or disable the animation for the model if it has any.",
         openspace::properties::Property::Visibility::User
     };
 
     constexpr openspace::properties::Property::PropertyInfo AmbientIntensityInfo = {
         "AmbientIntensity",
         "Ambient Intensity",
-        "A multiplier for ambient lighting",
-        // @VISIBILITY(2.4)
+        "A multiplier for ambient lighting.",
         openspace::properties::Property::Visibility::User
     };
 
     constexpr openspace::properties::Property::PropertyInfo DiffuseIntensityInfo = {
         "DiffuseIntensity",
         "Diffuse Intensity",
-        "A multiplier for diffuse lighting",
-        // @VISIBILITY(2.4)
+        "A multiplier for diffuse lighting.",
         openspace::properties::Property::Visibility::User
     };
 
     constexpr openspace::properties::Property::PropertyInfo SpecularIntensityInfo = {
         "SpecularIntensity",
         "Specular Intensity",
-        "A multiplier for specular lighting",
-        // @VISIBILITY(2.4)
+        "A multiplier for specular lighting.",
         openspace::properties::Property::Visibility::User
     };
 
     constexpr openspace::properties::Property::PropertyInfo ShadingInfo = {
         "PerformShading",
         "Perform Shading",
-        "This value determines whether this model should be shaded by using the position "
-        "of the Sun",
+        "Determines whether shading should be applied to this model, based on the "
+        "provided list of light sources. If false, the model will be fully illuminated.",
         openspace::properties::Property::Visibility::User
     };
 
     constexpr openspace::properties::Property::PropertyInfo EnableFaceCullingInfo = {
         "EnableFaceCulling",
         "Enable Face Culling",
-        "Enable OpenGL automatic face culling optimization",
+        "Enable OpenGL automatic face culling optimization.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo ModelTransformInfo = {
         "ModelTransform",
         "Model Transform",
-        "This value specifies the model transform that is applied to the model before "
-        "all other transformations are applied",
+        "An extra model transform matrix that is applied to the model before all other "
+        "transformations are applied.",
         openspace::properties::Property::Visibility::Developer
     };
 
     constexpr openspace::properties::Property::PropertyInfo PivotInfo = {
         "Pivot",
         "Pivot",
-        "A vector that moves the place of origin for the model",
+        "A vector that moves the place of origin for the model.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo ModelScaleInfo = {
         "ModelScale",
         "Model Scale",
-        "This value specifies the scale for the model. If a value for the ModelScale was "
-        "provided in the asset file, you can see and change it here. If instead a unit "
-        "name was provided in the asset, this is the value that that name represents. "
-        "For example 'Centimeter' becomes 0.01. For more information see "
-        "http://wiki.openspaceproject.com/docs/builders/models/model-scale.html",
+        "The scale of the model. If a numeric value is provided in the asset file, the scale "
+        "will be that exact value. If instead a unit name is provided, this "
+        "is the value that that name represents. For example 'Centimeter' becomes 0.01.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo RotationVecInfo = {
         "RotationVector",
         "Rotation Vector",
-        "Rotation Vector using degrees",
-        // @VISIBILITY(3.75)
+        "A rotation vector with Euler angles, specified in degrees.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo LightSourcesInfo = {
         "LightSources",
         "Light Sources",
-        "A list of light sources that this model should accept light from",
+        "A list of light sources that this model should accept light from.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo EnableDepthTestInfo = {
         "EnableDepthTest",
         "Enable Depth Test",
-        "Enable Depth Testing for the Model",
+        "If true, depth testing is enabled for the model. This means that parts of the "
+        "model that are occluded by other parts will not be rendered. If disabled, the "
+        "depth of the model part will not be taken into account in rendering and some "
+        "parts that should be hidden behind a model might be rendered in front.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
     constexpr openspace::properties::Property::PropertyInfo BlendingOptionInfo = {
         "BlendingOption",
         "Blending Options",
-        "Changes the blending function used to calculate the colors of the model with "
-        "respect to the opacity",
+        "Controls the blending function used to calculate the colors of the model with "
+        "respect to the opacity.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
@@ -208,19 +191,17 @@ namespace {
             Mile
         };
 
-        // The scale of the model. For example, if the model is in centimeters
-        // then <code>ModelScale = 'Centimeter'</code> or <code>ModelScale = 0.01</code>.
-        // The value that this needs to be in order for the model to be in the correct
-        // scale relative to the rest of OpenSpace can be tricky to find.
-        // Essentially it depends on the model software that the model was created
-        // with and the original intention of the modeler. For more information see
-        // our wiki page for this parameter:
-        // http://wiki.openspaceproject.com/docs/builders/models/model-scale.html
+        // The scale of the model. For example, if the model is in centimeters then
+        // `ModelScale = 'Centimeter'` or `ModelScale = 0.01`. The value that this needs
+        // to be in order for the model to be in the correct scale relative to the rest
+        // of OpenSpace can be tricky to find. Essentially, it depends on the model
+        // software that the model was created with and the original intention of the
+        // modeler.
         std::optional<std::variant<ScaleUnit, double>> modelScale;
 
-        // By default the given ModelScale is used to scale the model down,
-        // by setting this setting to true the model is instead scaled up with the
-        // given ModelScale
+        // By default the given `ModelScale` is used to scale down the model. By setting
+        // this setting to true the scaling is inverted to that the model is instead
+        // scaled up with the given `ModelScale`.
         std::optional<bool> invertModelScale;
 
         // Set if invisible parts (parts with no textures or materials) of the model
@@ -231,7 +212,7 @@ namespace {
         std::optional<bool> enableAnimation;
 
         // The date and time that the model animation should start.
-        // In format 'YYYY MM DD hh:mm:ss'.
+        // In format `'YYYY MM DD hh:mm:ss'`.
         std::optional<std::string> animationStartTime [[codegen::datetime()]];
 
         enum class [[codegen::map(openspace::TimeUnit)]] AnimationTimeUnit {
@@ -242,9 +223,9 @@ namespace {
             Minute
         };
 
-        // The time scale for the animation relative to seconds.
-        // Ex, if animation is in milliseconds then AnimationTimeScale = 0.001 or
-        // AnimationTimeScale = Millisecond, default is Second
+        // The time scale for the animation relative to seconds. For example, if the
+        // animation is in milliseconds then `AnimationTimeScale = 0.001` or
+        // `AnimationTimeScale = \"Millisecond\"`.
         std::optional<std::variant<AnimationTimeUnit, float>> animationTimeScale;
 
         enum class AnimationMode {
@@ -255,10 +236,8 @@ namespace {
             BounceInfinitely
         };
 
-        // The mode of how the animation should be played back.
-        // Default is animation is played back once at the start time.
-        // For a more detailed description see:
-        // http://wiki.openspaceproject.com/docs/builders/model-animation
+        // The mode of how the animation should be played back. Default is that the
+        // animation is played back once at the start time.
         std::optional<AnimationMode> animationMode;
 
         // [[codegen::verbatim(AmbientIntensityInfo.description)]]
@@ -295,12 +274,10 @@ namespace {
         // [[codegen::verbatim(BlendingOptionInfo.description)]]
         std::optional<std::string> blendingOption;
 
-        // The path to the vertex shader program that is used instead of the default
-        // shader.
+        // The path to a vertex shader program to use instead of the default shader.
         std::optional<std::filesystem::path> vertexShader;
 
-        // The path to the fragment shader program that is used instead of the default
-        // shader.
+        // The path to a fragment shader program to use instead of the default shader.
         std::optional<std::filesystem::path> fragmentShader;
     };
 #include "renderablemodel_codegen.cpp"
@@ -621,7 +598,7 @@ void RenderableModel::initializeGL() {
         ghoul::opengl::ProgramObject::IgnoreError::Yes
     );
 
-    ghoul::opengl::updateUniformLocations(*_program, _uniformCache, UniformNames);
+    ghoul::opengl::updateUniformLocations(*_program, _uniformCache);
 
     _quadProgram = BaseModule::ProgramObjectManager.request(
         "ModelOpacityProgram",
@@ -631,18 +608,13 @@ void RenderableModel::initializeGL() {
             const std::filesystem::path fs =
                 absPath("${MODULE_BASE}/shaders/modelOpacity_fs.glsl");
 
-            return global::renderEngine->buildRenderProgram(
-                "ModelOpacityProgram",
+            return global::renderEngine->buildRenderProgram("ModelOpacityProgram",
                 vs,
                 fs
             );
         }
     );
-    ghoul::opengl::updateUniformLocations(
-        *_quadProgram,
-        _uniformOpacityCache,
-        UniformOpacityNames
-    );
+    ghoul::opengl::updateUniformLocations(*_quadProgram, _uniformOpacityCache);
 
     // Screen quad VAO
     constexpr std::array<GLfloat, 24> QuadVtx = {
@@ -1020,16 +992,12 @@ void RenderableModel::render(const RenderData& data, RendererTasks&) {
 void RenderableModel::update(const UpdateData& data) {
     if (_program->isDirty()) {
         _program->rebuildFromFile();
-        ghoul::opengl::updateUniformLocations(*_program, _uniformCache, UniformNames);
+        ghoul::opengl::updateUniformLocations(*_program, _uniformCache);
     }
 
     if (_quadProgram->isDirty()) {
         _quadProgram->rebuildFromFile();
-        ghoul::opengl::updateUniformLocations(
-            *_quadProgram,
-            _uniformOpacityCache,
-            UniformOpacityNames
-        );
+        ghoul::opengl::updateUniformLocations(*_quadProgram, _uniformOpacityCache);
     }
 
     if (!hasOverrideRenderBin()) {

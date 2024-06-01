@@ -48,18 +48,16 @@ namespace {
     constexpr openspace::properties::Property::PropertyInfo EffectiveTemperatureInfo = {
         "EffectiveTemperature",
         "Effective Temperature",
-        "The effective temperature of the corresponding star, in Kelvin. "
-        "Used to compute the width and size of the disc",
-        // @VISIBILITY(2.5)
+        "The effective temperature of the corresponding star, in Kelvin. Used to compute "
+        "the width and size of the disc.",
         openspace::properties::Property::Visibility::User
     };
 
     constexpr openspace::properties::Property::PropertyInfo LuminosityInfo = {
         "Luminosity",
         "Luminosity",
-        "The luminosity of the corresponding star, in units of solar luminosities. "
-        "Used to compute the width and size of the disc",
-        // @VISIBILITY(2.5)
+        "The luminosity of the corresponding star, in units of solar luminosities. Used "
+        "to compute the width and size of the disc.",
         openspace::properties::Property::Visibility::User
     };
 
@@ -67,8 +65,7 @@ namespace {
         "Optimistic",
         "Optimistic" ,
         "If true, the habitable zone disc is rendered with the optimistic boundaries "
-        "rather than the conservative ones",
-        // @VISIBILITY(2.5)
+        "rather than the conservative ones.",
         openspace::properties::Property::Visibility::User
     };
 
@@ -78,8 +75,7 @@ namespace {
         "The effective temperature interval for which Kopparapu's formula is used for "
         "the habitable zone computation. For stars with temperatures outside the range, "
         "a simpler method by Tom E. Harris is used. This method only uses the star "
-        "luminosity and does not include computation of the optimistic boundaries",
-        // @VISIBILITY(2.5)
+        "luminosity and does not include computation of the optimistic boundaries.",
         openspace::properties::Property::Visibility::User
     };
 

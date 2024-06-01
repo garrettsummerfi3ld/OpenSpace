@@ -208,8 +208,7 @@ namespace {
         if (e.find('.') == std::string::npos) {
             e += ".0";
         }
-        // @TODO(abock) The 'd' suffix can be removed when
-        // https://github.com/eliaskosunen/scnlib/issues/104 is fixed
+        // @TODO(abock, 2024-05-20) 'd' suffix is needed until scnlib updates to v3
         auto res = scn::scan<int, double>(e, "{:2d}{}");
         if (!res) {
             throw ghoul::RuntimeError(std::format("Error parsing epoch '{}'", epoch));
@@ -266,15 +265,20 @@ namespace {
             epoch.end(),
             [](char c) { return c == '-'; }
         );
-        const std::string format = (nDashes == 2) ? "{:4}-{:2}-{:2}{}" : "{:4}{:2}{:2}{}";
-        auto res = scn::scan<int, int, int, double>(e, scn::runtime_format(format));
+        const std::string format = (nDashes == 2) ? "{:4d}-{:2d}-{}" : "{:4d}{:2d}{}";
+        auto res = scn::scan<int, int, double>(e, scn::runtime_format(format));
         if (!res) {
             throw ghoul::RuntimeError(std::format("Error parsing epoch '{}'", epoch));
         }
-        auto [year, monthNum, dayOfMonthNum, fractionOfDay] = res->values();
+        auto [year, monthNum, dayOfMonth] = res->values();
         const int daysSince2000 = countDays(year);
-        const int wholeDaysInto = daysIntoGivenYear(year, monthNum, dayOfMonthNum);
-        const double daysInYear = static_cast<double>(wholeDaysInto) + fractionOfDay;
+        const int daysInto = daysIntoGivenYear(
+            year,
+            monthNum,
+            static_cast<int>(dayOfMonth)
+        );
+        const double daysInYear = static_cast<double>(daysInto) +
+            (dayOfMonth - std::floor(dayOfMonth));
 
         // 3
         using namespace std::chrono;
@@ -332,8 +336,7 @@ namespace {
             // We have the first form
             int month = 0;
             int days = 0;
-            // @TODO(abock) The 'd' suffix can be removed when
-            // https://github.com/eliaskosunen/scnlib/issues/104 is fixed
+            // @TODO(abock, 2024-05-20) 'd' suffix is needed until scnlib updates to v3
             auto res = scn::scan<int, int, int, int, int, double>(
                 epoch, "{:4d}-{:2d}-{:2d}T{:2d}:{:2d}:{}"
             );
@@ -347,8 +350,7 @@ namespace {
         else if (pos == 8) {
             // We have the second form
 
-            // @TODO(abock) The 'd' suffix can be removed when
-            // https://github.com/eliaskosunen/scnlib/issues/104 is fixed
+            // @TODO(abock, 2024-05-20) 'd' suffix is needed until scnlib updates to v3
             auto res = scn::scan<int, int, int, int, double>(
                 epoch, "{:4d}-{:3d}T{:2d}:{:2d}:{}"
                 //date.year, date.nDays, date.hours, date.minutes, date.seconds

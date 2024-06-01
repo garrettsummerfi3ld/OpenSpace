@@ -64,29 +64,20 @@ namespace {
         Billboards
     };
 
-    constexpr std::array<const char*, 4> UniformNamesPoints = {
-        "modelMatrix", "viewProjectionMatrix", "eyePosition",
-        "opacityCoefficient"
-    };
-
-    constexpr std::array<const char*, 5> UniformNamesBillboards = {
-        "modelMatrix", "viewProjectionMatrix",
-        "cameraUp", "eyePosition", "psfTexture"
-    };
-
     constexpr openspace::properties::Property::PropertyInfo VolumeRenderingEnabledInfo = {
         "VolumeRenderingEnabled",
         "Volume Rendering",
-        "If this value is enabled, the volume rendering component of the galaxy "
-        "rendering is turned on. Otherwise, the volume rendering is skipped",
+        "Decides whether the volume rendering component of the galaxy rendering should "
+        "be enabled or not. If disabled, the volume rendering is skipped.",
         openspace::properties::Property::Visibility::User
     };
 
     constexpr openspace::properties::Property::PropertyInfo StarRenderingEnabledInfo = {
         "StarRenderingEnabled",
         "Star Rendering",
-        "If this value is enabled, the point-based star rendering component of the "
-        "galaxy rendering is turned on. Otherwise, the volume rendering is skipped",
+        "Decides whether the point-based star rendering component of the galaxy "
+        "rendering should be enabled or not. If disabled, the point-based star rendering "
+        "is skipped.",
         openspace::properties::Property::Visibility::User
     };
 
@@ -95,7 +86,7 @@ namespace {
         "Step Size",
         "Determines the distance between steps taken in the volume rendering. The lower "
         "the number is, the better the rendering looks, but also takes more "
-        "computational resources to render",
+        "computational resources to render.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
@@ -104,8 +95,7 @@ namespace {
         "Absorption Multiplier",
         "A unit-less scale factor for the probability of dust absorbing a light "
         "particle. The amount of absorption determines the spectrum of the light that is "
-        "emitted from the galaxy",
-        // @VISIBILITY(2.5)
+        "emitted from the galaxy.",
         openspace::properties::Property::Visibility::User
     };
 
@@ -113,23 +103,21 @@ namespace {
         "EmissionMultiply",
         "Emission Multiplier",
         "A unit-less scale factor for the amount of light being emitted by dust in the "
-        "galaxy",
-        // @VISIBILITY(2.5)
+        "galaxy.",
         openspace::properties::Property::Visibility::User
     };
 
     constexpr openspace::properties::Property::PropertyInfo RotationInfo = {
         "Rotation",
         "Euler rotation",
-        "The internal rotation of the volume rendering in Euler angles",
+        "The internal rotation of the volume rendering in Euler angles.",
         openspace::properties::Property::Visibility::Developer
     };
 
     constexpr openspace::properties::Property::PropertyInfo StarRenderingMethodInfo = {
         "StarRenderingMethod",
         "Star Rendering Method",
-        "This value determines which rendering method is used for visualization of the "
-        "stars",
+        "The rendering method used for visualizing the stars.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
@@ -139,7 +127,7 @@ namespace {
         "The ratio of point-like stars that are rendered to produce the overall galaxy "
         "image. At a value of 0, no stars are rendered, at a value of 1 all points "
         "contained in the dataset are rendered. The specific value chosen is a "
-        "compromise between image fidelity and rendering performance",
+        "compromise between image fidelity and rendering performance.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
@@ -147,8 +135,7 @@ namespace {
     {
         "Downscale",
         "Downscale Factor Volume Rendering",
-        "This value sets the downscaling factor when rendering the current volume",
-        // @VISIBILITY(2.5)
+        "The downscaling factor used when rendering the volume.",
         openspace::properties::Property::Visibility::User
     };
 
@@ -156,7 +143,7 @@ namespace {
     {
         "Steps",
         "Number of RayCasting Steps",
-        "This value set the number of integration steps during the raycasting procedure",
+        "The number of integration steps used during the raycasting procedure.",
         openspace::properties::Property::Visibility::AdvancedUser
     };
 
@@ -176,8 +163,8 @@ namespace {
         // [[codegen::verbatim(EmissionMultiplyInfo.description)]]
         std::optional<float> emissionMultiply;
 
-        // If this value is specified, the default raycasting shader is overwritten and
-        // the shader found at the provided location is used instead
+        // If specified, the default raycasting shader is overwritten and the shader at
+        // this location is used instead.
         std::optional<std::filesystem::path> raycastingShader;
 
         enum class [[codegen::map(StarRenderingMethod)]] StarRenderingMethod {
@@ -474,16 +461,8 @@ void RenderableGalaxy::initializeGL() {
         );
     }
 
-    ghoul::opengl::updateUniformLocations(
-        *_pointsProgram,
-        _uniformCachePoints,
-        UniformNamesPoints
-    );
-    ghoul::opengl::updateUniformLocations(
-        *_billboardsProgram,
-        _uniformCacheBillboards,
-        UniformNamesBillboards
-    );
+    ghoul::opengl::updateUniformLocations(*_pointsProgram, _uniformCachePoints);
+    ghoul::opengl::updateUniformLocations(*_billboardsProgram, _uniformCacheBillboards);
 
     glGenVertexArrays(1, &_pointsVao);
     glGenBuffers(1, &_positionVbo);
@@ -650,7 +629,7 @@ void RenderableGalaxy::renderPoints(const RenderData& data) {
 
     _pointsProgram->setUniform(_uniformCachePoints.modelMatrix, modelTransform);
     _pointsProgram->setUniform(
-        _uniformCachePoints.cameraViewProjectionMatrix,
+        _uniformCachePoints.viewProjectionMatrix,
         cameraViewProjectionMatrix
     );
 
@@ -701,7 +680,7 @@ void RenderableGalaxy::renderBillboards(const RenderData& data) {
 
     _billboardsProgram->setUniform(_uniformCacheBillboards.modelMatrix, modelTransform);
     _billboardsProgram->setUniform(
-        _uniformCacheBillboards.cameraViewProjectionMatrix,
+        _uniformCacheBillboards.viewProjectionMatrix,
         cameraViewProjectionMatrix
     );
 

@@ -314,19 +314,19 @@ jobs:
     name: Create GitHub Release
     steps:
       - name: Download Windows artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: OpenSpace-win
           path: ${{ github.workspace }}/OpenSpace-win
 
       - name: Download Linux artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: OpenSpace-linux
           path: ${{ github.workspace }}/OpenSpace-linux
 
       - name: Download macOS artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: OpenSpace-macos-latest
           path: ${{ github.workspace }}/OpenSpace-macos
